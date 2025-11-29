@@ -1,3 +1,35 @@
 <resources>
-    <string name="app_name">Gamified Fitness Tracker</string>
+    <string name="app_name">GroupProjectPlayground</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="workout_challenge">Workout Challenge</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="calories">Calories</string>
+    <string name="duration">Duration</string>
+    <string name="rank">Rank</string>
+    <string name="player">Player</string>
+    <string name="back_button">Back</string>
+    <string name="trophy_icon">Trophy</string>
+    <string name="no_data">No Data</string>
+    <string name="no_players_yet">No players have completed this workout yet</string>
+
+    <!-- Login Activity Strings -->
+    <string name="fitness_tracker">Fitness Tracker</string>
+    <string name="get_fit_stay_motivated">Get Fit, Stay Motivated</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="login_to_continue">Login or sign up to continue</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="version_1_0">Version 1.0</string>
+    <string name="app_logo">App Logo</string>
+
+    <!-- Failed Login Activity Strings -->
+    <string name="login_failed">Login Failed</string>
+    <string name="user_exists_wrong_password">User with username exists but an incorrect password was entered</string>
+    <string name="error_icon">Error Icon</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="suggestions">Suggestions:</string>
+    <string name="check_password">Double-check your password</string>
+    <string name="check_caps_lock">Make sure Caps Lock is off</string>
 </resources>
