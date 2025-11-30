@@ -3,6 +3,7 @@ package com.example.testerapplication
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -24,6 +25,7 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         val timerText = findViewById<TextView>(R.id.timerText)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val increaseRepsButton = findViewById<Button>(R.id.increaseRepsButton)
+        val leaderboardButton = findViewById<ImageButton>(R.id.leaderboardButton)
 
         // Assumption: There will be a Button / Input that allows you to select your exercise.
         // Current Implementation: User inputs which exercise, and autofill takes care of the rest
@@ -35,6 +37,9 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
             setBackgroundExercise(Workout.RUN) // Testing
         }
         increaseRepsButton.setOnClickListener { updateReps() }
+//        leaderboardButton.setOnClickListener { setContentView(R.layout.leaderboard) } Use when leaderboard implemented
+        
+
 
         // Set TimerView and Progress Bar Update functions.
         val timer = game.getCountDownTimer()
