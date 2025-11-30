@@ -1,37 +1,36 @@
 package com.example.gamifiedfitnesstracker
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.core.content.edit
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 
 class ExerciseLogger {
-    private var exerciseDuration : Duration
+    private var exerciseDuration: Duration
     private var userScore = 0
-    private var currentReps : Int = 0 // Represents #/amount of exercise done. Potential rename for clarity.
-    private var caloriesBurned : Double = 0.0
+    private var currentReps = 0 // amount of exercise done. Potential rename for clarity.
+    private var caloriesBurned = 0.0
     private var personalBest = 0
-    private val activity: ExerciseLoggerActivity
 
     private var currentGame: Workout? = null
 
     // User inputs the duration of exercise.
-    constructor(activity: ExerciseLoggerActivity, exerciseDuration: Duration) {
+    constructor(exerciseDuration: Duration) {
         this.exerciseDuration = exerciseDuration
-        this.activity = activity
     }
 
     // Returns true if we have a new personal best.
-    fun updateReps() : Boolean {
+    fun updateReps(context: Context): Boolean {
         this.userScore += 1
 
-        if(this.currentReps > personalBest) {
+        if (this.currentReps > personalBest) {
             this.personalBest = this.currentReps
 
-            val sharedPreferences: SharedPreferences? = activity.getSharedPreferences(currentGame.displayName, Context.MODE_PRIVATE)
-            val prefenceEditor = sharedPreferences?.edit()
-            prefenceEditor?.putInt(currentGame.displayName, personalBest)?.apply()
+            val sp = context.getSharedPreferences(currentGame!!.displayName, Context.MODE_PRIVATE)
+            sp.edit(commit = true) {
+                putInt(currentGame!!.displayName, personalBest)
+            }
             return true
         }
         return false
@@ -85,12 +84,9 @@ class ExerciseLogger {
         personalBest = best
     }
 
-    fun getActivity(): ExerciseLoggerActivity {
-        return activity
-    }
 
     fun getCurrentGame(): Workout {
-        return currentGame
+        return currentGame!!
     }
 
     fun setCurrentGame(game: Workout) {

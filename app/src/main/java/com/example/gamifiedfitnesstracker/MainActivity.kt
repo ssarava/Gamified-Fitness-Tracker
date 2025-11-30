@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                         saveLoginState(username)
 
                         // Navigate to main activity
-                        navigateToMainActivity(username)
+                        navigateToSomeActivity(username)
                     } else {
                         // Password incorrect - navigate to FailedLoginActivity
                         showLoading(false)
@@ -235,7 +235,7 @@ class MainActivity : AppCompatActivity() {
                 saveLoginState(username)
 
                 // Navigate to main activity
-                navigateToMainActivity(username)
+                navigateToSomeActivity(username)
             }
             .addOnFailureListener { e ->
                 showLoading(false)
@@ -271,11 +271,18 @@ class MainActivity : AppCompatActivity() {
     /**
      * Navigate to main activity after successful login
      */
-    private fun navigateToMainActivity(username: String) {
+    private fun navigateToSomeActivity(username: String) {
         // TODO: Replace with your actual main activity
         // For now, we'll show a placeholder
-        val intent = Intent(this, LeaderboardActivity::class.java)
-        intent.putExtra("USERNAME", username)
+
+//        val intent = Intent(this, LeaderboardActivity::class.java)
+//        intent.putExtra("USERNAME", username)
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//        startActivity(intent)
+//        finish()
+
+        val intent = Intent(this, ExerciseLoggerActivity::class.java)
+//        intent.putExtra("USERNAME", username)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()

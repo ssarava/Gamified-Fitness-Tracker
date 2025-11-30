@@ -20,17 +20,9 @@ class FailedLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_failed_login)
 
-        // Initialize UI components
-        initializeViews()
-
-        // Get username from intent
-        val username = intent.getStringExtra("USERNAME") ?: "Unknown"
-
-        // Display error message with username
-        displayErrorMessage(username)
-
-        // Setup back button
-        setupBackButton()
+        initializeViews()   // Initialize UI components
+        val username = intent.getStringExtra("USERNAME") ?: "Unknown"   // Get username
+        displayErrorMessage(username)   // Display error message with username
     }
 
     /**
@@ -40,6 +32,7 @@ class FailedLoginActivity : AppCompatActivity() {
         tvErrorMessage = findViewById(R.id.tvErrorMessage)
         tvUsername = findViewById(R.id.tvUsername)
         btnBack = findViewById(R.id.btnBack)
+        btnBack.setOnClickListener { finish() }     // Finish this activity, return to LoginActivity
     }
 
     /**
@@ -52,17 +45,7 @@ class FailedLoginActivity : AppCompatActivity() {
         // Display the username prominently
         tvUsername.text = username
 
-        // Alternative: You can combine them in a single TextView if preferred
+        // Alternative: Can combine them in a single TextView if preferred
         // tvErrorMessage.text = "User with $username exists but an incorrect password was entered"
-    }
-
-    /**
-     * Setup back button click listener
-     */
-    private fun setupBackButton() {
-        btnBack.setOnClickListener {
-            // Finish this activity and return to LoginActivity
-            finish()
-        }
     }
 }
