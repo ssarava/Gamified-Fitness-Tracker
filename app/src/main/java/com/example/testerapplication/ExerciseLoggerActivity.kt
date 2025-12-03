@@ -1,5 +1,7 @@
 package com.example.testerapplication
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -11,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlin.time.Duration.Companion.minutes
 
 class ExerciseLoggerActivity : AppCompatActivity()  {
+
+    companion object {
+        const val SHARED_PREFERENCE_IDENTIFIER = "Most Recent Exercise"
+    }
     private lateinit var game : ExerciseLogger
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +25,7 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
 
         // Initialize Game
         val initDuration = 0.minutes
-        game = ExerciseLogger(this, 1) // Testing
+        game = ExerciseLogger(1) // Testing, Fill in with passed input
 
         // Pull Views
         val timerText = findViewById<TextView>(R.id.timerText)
@@ -31,9 +37,10 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         // Current Implementation: User inputs which exercise, and autofill takes care of the rest
 
         // findViewById(R.id.userInput).text == "selected exercise"
-        var selected_exercise: Workout
+        // Need to pass in an enum
+        var selectedExercise: Workout
         if (true) {
-//            setBackgroundExercise(selected_exercise)
+//            setBackgroundExercise(selectedExercise)
             setBackgroundExercise(Workout.RUN) // Testing
         }
         increaseRepsButton.setOnClickListener { updateReps() }
@@ -54,10 +61,19 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
             increaseRepsButton.alpha = 0.5f
             progressBar.progress = 100
         }
-        // Start Workout
-        timer.start()
 
-}
+        game.setCurrentWorkout(Workout.RUN) // Testing pevents null pointer
+        val sharedPreferences: SharedPreferences = this.getSharedPreferences(SHARED_PREFERENCE_IDENTIFIER, Context.MODE_PRIVATE)
+        val prefenceEditor = sharedPreferences.edit()
+        prefenceEditor.putString(SHARED_PREFERENCE_IDENTIFIER, game.getCurrentWorkout().displayName).apply()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Start Workout
+        game.getCountDownTimer().start()
+    }
     fun updateReps() {
         val currentReps = findViewById<TextView>(R.id.currentScoreText)
         val personalBest = findViewById<TextView>(R.id.personalBestText)
@@ -67,9 +83,9 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         currentReps.text = game.getCurrentReps().toString()
         personalBest.text = game.getPersonalBest().toString()
     }
-    fun setBackgroundExercise(selected_exercise: Workout) {
+    fun setBackgroundExercise(selectedExercise: Workout) {
         var background =
-            when(selected_exercise) {
+            when(selectedExercise) {
             Workout.RUN -> R.drawable.footsteps
             Workout.SQUAT -> R.drawable.squat_2
             Workout.BENCH_PRESS -> R.drawable.bench_press_2
@@ -80,7 +96,7 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         val imageView = findViewById<ImageView>(R.id.backgroundExerciseImage)
         val exerciseNameView = findViewById<TextView>(R.id.exerciseName)
         imageView.setImageResource(background)
-        exerciseNameView.text = selected_exercise.displayName
+        exerciseNameView.text = selectedExercise.displayName
     }
 
     fun saveToFirebase() {

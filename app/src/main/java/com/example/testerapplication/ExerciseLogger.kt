@@ -2,9 +2,6 @@ package com.example.testerapplication
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.CountDownTimer
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 
 
 class ExerciseLogger {
@@ -12,15 +9,13 @@ class ExerciseLogger {
     private var currentReps : Int = 0 // Represents #/amount of exercise done. Potential rename for clarity.
     private var caloriesBurned : Double = 0.0
     private var personalBest = 0
-    private val activity: ExerciseLoggerActivity
 
-    private var currentGame: Workout? = null
+    private var currentWorkout: Workout? = null
     private var countDownTimer: ExerciseTimer
 
     // User inputs the duration of exercise.
-    constructor(activity: ExerciseLoggerActivity, exerciseInMinutes: Int) {
-        this.activity = activity
-        this.countDownTimer = ExerciseTimer(activity, exerciseInMinutes)
+    constructor(exerciseInMinutes: Int) {
+        this.countDownTimer = ExerciseTimer(exerciseInMinutes)
     }
 
     // Returns true if we have a new personal best.
@@ -30,10 +25,10 @@ class ExerciseLogger {
         if(this.currentReps > personalBest) {
             this.personalBest = this.currentReps
 
-            val sharedPreferences: SharedPreferences? = activity.getSharedPreferences(currentGame?.displayName, Context.MODE_PRIVATE)
-            val prefenceEditor = sharedPreferences?.edit()
-            prefenceEditor?.putInt(currentGame?.displayName, personalBest)?.apply()
-            return true
+//            val sharedPreferences: SharedPreferences? = activity.getSharedPreferences(currentWorkout?.displayName, Context.MODE_PRIVATE)
+//            val prefenceEditor = sharedPreferences?.edit()
+//            prefenceEditor?.putInt(currentWorkout?.displayName, personalBest)?.apply()
+//            return true
         }
         return false
     }
@@ -43,6 +38,7 @@ class ExerciseLogger {
         this.currentReps = 0
         this.caloriesBurned = 0.0
         this.personalBest = 0
+        this.currentWorkout = null
     }
 
     fun getUserScore(): Int {
@@ -77,16 +73,12 @@ class ExerciseLogger {
         personalBest = best
     }
 
-    fun getActivity(): ExerciseLoggerActivity {
-        return activity
+    fun getCurrentWorkout(): Workout {
+        return currentWorkout!!
     }
 
-    fun getCurrentGame(): Workout {
-        return currentGame!!
-    }
-
-    fun setCurrentGame(game: Workout) {
-        currentGame = game
+    fun setCurrentWorkout(game: Workout) {
+        currentWorkout = game
     }
 
     fun getCountDownTimer() : ExerciseTimer {

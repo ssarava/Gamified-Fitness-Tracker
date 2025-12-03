@@ -12,10 +12,9 @@ class ExerciseTimer : CountDownTimer{
     private var lengthInMinutes: Int
     private var timeLeft : Long =  1L
 
-    constructor(activity: ExerciseLoggerActivity, exerciseInMinutes : Int) :
+    constructor(exerciseInMinutes : Int) :
             super(exerciseInMinutes * 60 * 1000L, 1000L) {
                 this.lengthInMinutes = exerciseInMinutes
-
     }
 
     var setOnTickListener: ((millisLeft: Long) -> Unit)? = null
