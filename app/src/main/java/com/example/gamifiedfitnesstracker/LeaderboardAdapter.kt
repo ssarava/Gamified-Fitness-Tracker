@@ -31,7 +31,6 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
         val player = leaderboard.getPlayers()[position]
 
         // Set rank
-//        holder.tvRank.text = player.rank.toString()
         (position + 1).toString().also { holder.tvRank.text = it }
 
         // Set username
@@ -39,13 +38,13 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
 
         // Set metric value based on current sort mode
         holder.tvMetricValue.text =
-            if (leaderboard.getCurrentSortMode() == Leaderboard.SortMode.CALORIES)
-                "${player.caloriesBurned} kcal"
+            if (leaderboard.getCurrentSortMode() == Leaderboard.SortMode.RUN)
+                "${player.runBest} mile${if (player.runBest == 1) "" else "s"}"
             else
-                formatDuration(player.workoutDuration!!.toLong())
+                "${player.squatBest} rep${if (player.squatBest == 1) "" else "s"}"
 
         // Highlight current user
-        val isCurrUser = player.userId == leaderboard.getCurrentUserId()
+        val isCurrUser = player.username == leaderboard.getCurrentUsername()
         holder.itemContainer.setBackgroundColor(
             ContextCompat.getColor(
                 holder.itemView.context,

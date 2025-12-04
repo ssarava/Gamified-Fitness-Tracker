@@ -3,8 +3,8 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="workout_challenge">Workout Challenge</string>
     <string name="sort_by">Sort by:</string>
-    <string name="calories">Calories</string>
-    <string name="duration">Duration</string>
+    <string name="run_enum">Run</string>
+    <string name="squat_enum">Squat</string>
     <string name="rank">Rank</string>
     <string name="player">Player</string>
     <string name="back_button">Back</string>
@@ -44,4 +44,20 @@
 
     <!--    LeaderboardAdapter Strings-->
     <string name="tvUsername_text_you">%1$s (You)</string>
+
+    <!--    MainMenuActivity Strings-->
+    <string name="pushUp">💪 Push-up</string>
+    <string name="main_menu_title">My Fitness Journey</string>
+    <string name="welcome">Welcome!</string>
+    <string name="personal_bests">Your Personal Bests</string>
+    <string name="squat">🏋️ Squat</string>
+    <string name="running">🏃 Running</string>
+    <string name="bench_press">🏋️ Bench Press</string>
+    <string name="curl">💪 Curl</string>
+    <string name="play_game">PLAY GAME</string>
+    <string name="default_best">0</string>
+
+    <string name="fitness_journey_welcome">Welcome to your fitness journey!</string>
+    <string name="my_fitness_journey">My Fitness Journey</string>
+    <string name="named_welcome">Welcome, %1$s</string>
 </resources>

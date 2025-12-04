@@ -11,8 +11,6 @@ import com.google.android.material.button.MaterialButton
  */
 class FailedLoginActivity : AppCompatActivity() {
 
-    // UI Components
-    private lateinit var tvErrorMessage: TextView
     private lateinit var tvUsername: TextView
     private lateinit var btnBack: MaterialButton
 
@@ -20,32 +18,10 @@ class FailedLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_failed_login)
 
-        initializeViews()   // Initialize UI components
-        val username = intent.getStringExtra("USERNAME") ?: "Unknown"   // Get username
-        displayErrorMessage(username)   // Display error message with username
-    }
-
-    /**
-     * Initialize all UI components
-     */
-    private fun initializeViews() {
-        tvErrorMessage = findViewById(R.id.tvErrorMessage)
+        // Initialize relevant UI components
         tvUsername = findViewById(R.id.tvUsername)
         btnBack = findViewById(R.id.btnBack)
-        btnBack.setOnClickListener { finish() }     // Finish this activity, return to LoginActivity
-    }
-
-    /**
-     * Display error message with the username
-     */
-    private fun displayErrorMessage(username: String) {
-        // Set the main error message
-//        tvErrorMessage.text = "User with username"
-
-        // Display the username prominently
-        tvUsername.text = username
-
-        // Alternative: Can combine them in a single TextView if preferred
-        // tvErrorMessage.text = "User with $username exists but an incorrect password was entered"
+        btnBack.setOnClickListener { finish() }     // Return to MainActivity
+        tvUsername.text = intent.getStringExtra("USERNAME")!!   // Display error message
     }
 }

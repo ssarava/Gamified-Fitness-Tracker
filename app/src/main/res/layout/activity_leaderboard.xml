@@ -87,28 +87,28 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- Calories Button -->
+        <!-- Run Button -->
         <Button
-            android:id="@+id/btnSortCalories"
+            android:id="@+id/btnSortRun"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="@string/calories"
+            android:text="@string/run_enum"
             android:textSize="12sp"
             app:cornerRadius="20dp"
             app:strokeColor="@color/primary_color"
             app:strokeWidth="2dp" />
 
-        <!-- Duration Button -->
+        <!-- Squat Button -->
         <Button
-            android:id="@+id/btnSortDuration"
+            android:id="@+id/btnSortSquat"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/duration"
+            android:text="@string/squat_enum"
             android:textSize="12sp"
             app:cornerRadius="20dp"
             app:strokeColor="@color/primary_color"
@@ -152,7 +152,7 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text="@string/calories"
+            android:text="@string/run_enum"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:textStyle="bold" />

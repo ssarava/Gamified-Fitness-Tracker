@@ -13,15 +13,13 @@ import com.google.firebase.database.ValueEventListener
 class MainMenuActivity : AppCompatActivity() {
 
     private lateinit var btnPlayGame: MaterialButton
-    private lateinit var welcomeTextView: TextView
-    private lateinit var titleTextView: TextView
-    private lateinit var squatBestTextView: TextView
-    private lateinit var pushupBestTextView: TextView
-    private lateinit var runningBestTextView: TextView
-    private lateinit var benchpressBestTextView: TextView
-    private lateinit var curlBestTextView: TextView
-
-    private lateinit var username: String
+    private lateinit var welcomeTV: TextView
+    private lateinit var titleTV: TextView
+    private lateinit var squatBestTV: TextView
+    private lateinit var pushUpBestTV: TextView
+    private lateinit var runningBestTV: TextView
+    private lateinit var benchPressBestTV: TextView
+    private lateinit var curlBestTV: TextView
     private val database = FirebaseDatabase.getInstance().reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,46 +27,30 @@ class MainMenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main_menu)
 
         initializeViews()
-        getUsername()
-        displayWelcomeMessage()
+        setUsernameAndWelcomeMessage()
         loadPersonalBestsFromFirebase()
         setupClickListeners()
     }
 
     private fun initializeViews() {
         btnPlayGame = findViewById(R.id.btnPlayGame)
-        welcomeTextView = findViewById(R.id.welcomeTextView)
-        titleTextView = findViewById(R.id.titleTextView)
-        squatBestTextView = findViewById(R.id.squatBestTextView)
-        pushupBestTextView = findViewById(R.id.pushupBestTextView)
-        runningBestTextView = findViewById(R.id.runningBestTextView)
-        benchpressBestTextView = findViewById(R.id.benchpressBestTextView)
-        curlBestTextView = findViewById(R.id.curlBestTextView)
-
-        // Set the title directly
-        titleTextView.text = "My Fitness Journey"
+        welcomeTV = findViewById(R.id.welcomeTextView)
+        titleTV = findViewById(R.id.titleTextView)
+        squatBestTV = findViewById(R.id.squatBestTextView)
+        pushUpBestTV = findViewById(R.id.pushUpBestTextView)
+        runningBestTV = findViewById(R.id.runningBestTextView)
+        benchPressBestTV = findViewById(R.id.benchPressBestTextView)
+        curlBestTV = findViewById(R.id.curlBestTextView)
+        titleTV.text = resources.getString(R.string.my_fitness_journey)
     }
 
-    private fun getUsername() {
-        // Get username from intent first
-        username = intent.getStringExtra("USERNAME") ?: ""
-    }
-
-    private fun displayWelcomeMessage() {
-        if (username.isNotEmpty()) {
-            // Personalized welcome message
-            welcomeTextView.text = "Welcome, $username!"
-        } else {
-            // Default message if no username found
-            welcomeTextView.text = "Welcome to your fitness journey!"
-        }
+    private fun setUsernameAndWelcomeMessage() {
+        val username = intent.getStringExtra("USERNAME")!!      // Get username from intent
+        welcomeTV.text = resources.getString(R.string.named_welcome, username)
     }
 
     private fun loadPersonalBestsFromFirebase() {
-        if (username.isEmpty()) {
-            return // Can't load without username
-        }
-
+        val username = intent.getStringExtra("USERNAME")!!
         val personalBestsRef = database.child("users")
             .child(username)
             .child("personalBests")
@@ -76,62 +58,48 @@ class MainMenuActivity : AppCompatActivity() {
         personalBestsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
+                    val cls = Int::class.java
+
                     // Load each exercise's personal best
-                    val squatBest = snapshot.child("squat").getValue(Int::class.java) ?: 0
-                    val pushupBest = snapshot.child("pushup").getValue(Int::class.java) ?: 0
-                    val runningBest = snapshot.child("running").getValue(Int::class.java) ?: 0
-                    val benchpressBest = snapshot.child("benchpress").getValue(Int::class.java) ?: 0
-                    val curlBest = snapshot.child("curl").getValue(Int::class.java) ?: 0
+                    val squat = snapshot.child("squat").getValue(cls) ?: 0
+                    val pushUp = snapshot.child("pushUp").getValue(cls) ?: 0
+                    val run = snapshot.child("running").getValue(cls) ?: 0
+                    val bp = snapshot.child("benchPress").getValue(cls) ?: 0
+                    val curl = snapshot.child("curl").getValue(cls) ?: 0
 
                     // Update UI
-                    updatePersonalBestsUI(squatBest, pushupBest, runningBest, benchpressBest, curlBest)
+                    updatePersonalBestsUI(squat, pushUp, run, bp, curl)
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // basic error debug message
-                println("Firebase Database Error: ${error.code} - ${error.message}")            }
+                println("Database Error ${error.code}: ${error.message}")   // error debug message
+            }
         })
     }
 
-    private fun updatePersonalBestsUI(
-        squat: Int,
-        pushup: Int,
-        running: Int,
-        benchpress: Int,
-        curl: Int
-    ) {
+    private fun updatePersonalBestsUI(squat: Int, pushUp: Int, run: Int, bp: Int, curl: Int) {
         runOnUiThread {
-            squatBestTextView.text = squat.toString()
-            pushupBestTextView.text = pushup.toString()
-            runningBestTextView.text = running.toString()
-            benchpressBestTextView.text = benchpress.toString()
-            curlBestTextView.text = curl.toString()
+            squatBestTV.text = squat.toString()
+            pushUpBestTV.text = pushUp.toString()
+            runningBestTV.text = run.toString()
+            benchPressBestTV.text = bp.toString()
+            curlBestTV.text = curl.toString()
         }
     }
 
-    private fun setupClickListeners() {
-        btnPlayGame.setOnClickListener {
-            navigateToExerciseLogger()
-        }
-    }
+    private fun setupClickListeners() = btnPlayGame.setOnClickListener { goToExerciseLogger() }
 
-    private fun navigateToExerciseLogger() {
+    private fun goToExerciseLogger() {
         val intent = Intent(this, ExerciseLoggerActivity::class.java)
-
-        if (username.isNotEmpty()) {
-            intent.putExtra("USERNAME", username)
-        }
-
+        intent.putExtra("USERNAME", intent.getStringExtra("USERNAME")!!)
         startActivity(intent)
-        // no finish() since we want to ideally be able to return to the main menu maybe via nathan's screen
+        // no finish() since we want to return to the main menu maybe via nathan's screen
     }
 
     // refresh personal bests when returning to this activity
     override fun onResume() {
         super.onResume()
-        if (username.isNotEmpty()) {
-            loadPersonalBestsFromFirebase()
-        }
+        loadPersonalBestsFromFirebase()
     }
 }

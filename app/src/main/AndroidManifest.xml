@@ -16,13 +16,13 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".FailedLoginActivity" />
         <activity android:name=".MainMenuActivity" />
-        <activity android:name=".LeaderboardActivity"/>
-        <activity android:name=".ExerciseLoggerActivity"/>
+        <activity android:name=".LeaderboardActivity" />
+        <activity android:name=".ExerciseLoggerActivity" />
     </application>
 
 </manifest>

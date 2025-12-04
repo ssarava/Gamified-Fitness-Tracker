@@ -10,11 +10,10 @@ import kotlin.time.Duration.Companion.minutes
 class ExerciseLoggerActivity : AppCompatActivity() {
     private lateinit var game: ExerciseLogger
     private lateinit var incrementRepsBtn: Button
-    private lateinit var currentRepsTv: TextView
-    private lateinit var personalBestTv: TextView
+    private lateinit var currentRepsTV: TextView
+    private lateinit var personalBestTV: TextView
     private lateinit var backgroundExerciseImage: ImageView
-    private lateinit var exerciseNameTv: TextView
-
+    private lateinit var exerciseNameTV: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,8 +22,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         initializeViews()
 
         // Initialize Game
-        val initDuration = 0.minutes
-        game = ExerciseLogger(initDuration)
+        game = ExerciseLogger(0.minutes)
 
 
         // Assumption: There will be a Button / Input that allows you to select your exercise.
@@ -40,17 +38,17 @@ class ExerciseLoggerActivity : AppCompatActivity() {
 
     fun initializeViews() {
         incrementRepsBtn = findViewById(R.id.increaseRepsButton)
-        currentRepsTv = findViewById(R.id.currentScoreText)
-        personalBestTv = findViewById(R.id.personalBestText)
+        currentRepsTV = findViewById(R.id.currentScoreText)
+        personalBestTV = findViewById(R.id.personalBestText)
         backgroundExerciseImage = findViewById(R.id.backgroundExerciseImage)
-        exerciseNameTv = findViewById(R.id.exerciseName)
+        exerciseNameTV = findViewById(R.id.exerciseName)
     }
 
     fun updateReps() {
         // Update Game State
         game.updateReps(this)
-        currentRepsTv.text = game.getCurrentReps().toString()
-        personalBestTv.text = game.getPersonalBest().toString()
+        currentRepsTV.text = game.getCurrentReps().toString()
+        personalBestTV.text = game.getPersonalBest().toString()
     }
 
     fun setBackgroundExercise(selectedExercise: String) {
@@ -64,7 +62,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             }
 
         backgroundExerciseImage.setImageResource(background)
-        exerciseNameTv.text = selectedExercise
+        exerciseNameTV.text = selectedExercise
     }
 
     fun saveToFirebase() {

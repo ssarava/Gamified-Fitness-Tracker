@@ -1,8 +1,6 @@
 package com.example.gamifiedfitnesstracker
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -14,6 +12,9 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.*
 import androidx.core.content.edit
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Handles user authentication with username and password.
@@ -21,7 +22,6 @@ import androidx.core.content.edit
  */
 class MainActivity : AppCompatActivity() {
 
-    // UI Components
     private lateinit var etUsername: TextInputEditText
     private lateinit var etPassword: TextInputEditText
     private lateinit var usernameLayout: TextInputLayout
@@ -29,71 +29,43 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnLogin: MaterialButton
     private lateinit var btnSignUp: MaterialButton
     private lateinit var progressBar: ProgressBar
-
-    // Firebase
-    private lateinit var database: DatabaseReference
+//    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize Firebase
-        database = FirebaseDatabase.getInstance().reference
-
-        // Initialize UI components
-        initializeViews()
-        setupClickListeners()
+//        database = FirebaseDatabase.getInstance().reference     // Initialize Firebase
+        initializeViews()       // Initialize UI components
     }
 
     /**
-     * Initialize all UI components, and auto-populate username and password if possible
+     * Initializes all UI components, sets listeners,, and
+     * auto-populates username and password if they're stored locally
      */
     private fun initializeViews() {
-        val sp: SharedPreferences =
-            getSharedPreferences("${this.packageName}_preferences", MODE_PRIVATE)
+        val sp = getSharedPreferences("${packageName}_preferences", MODE_PRIVATE)
 
         etUsername = findViewById(R.id.etUsername)
-        val storedUsername = sp.getString(PREFERENCE_USERNAME, "")
-        etUsername.setText(storedUsername)
+        etUsername.setText(sp.getString(PREFERENCE_USERNAME, ""))
 
         etPassword = findViewById(R.id.etPassword)
-        val storedPassword = sp.getString(PREFERENCE_PASSWORD, "")
-        etPassword.setText(storedPassword)
+        etPassword.setText(sp.getString(PREFERENCE_PASSWORD, ""))
 
         usernameLayout = findViewById(R.id.usernameLayout)
         passwordLayout = findViewById(R.id.passwordLayout)
+
         btnLogin = findViewById(R.id.btnLogin)
         btnLogin.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_color))
+        btnLogin.setOnClickListener { if (validCredentials()) loginUser() }
+
         btnSignUp = findViewById(R.id.btnSignUp)
         btnSignUp.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_color))
+        btnSignUp.setOnClickListener { if (validCredentials()) signUpUser() }
+
         progressBar = findViewById(R.id.progressBar)
     }
 
-    /**
-     * Setup click listeners for buttons
-     */
-    private fun setupClickListeners() {
-
-        btnLogin.setOnClickListener {
-            if (validCredentials()) {
-//                val username = etUsername.text.toString().trim()
-//                val password = etPassword.text.toString().trim()
-                loginUser()
-            }
-        }
-
-        btnSignUp.setOnClickListener {
-            if (validCredentials()) {
-//                val username = etUsername.text.toString().trim()
-//                val password = etPassword.text.toString().trim()
-                signUpUser()
-            }
-        }
-    }
-
-    /**
-     * Validate user input
-     */
     private fun validCredentials(): Boolean {
         var isValid = true
         val username = etUsername.text.toString().trim()
@@ -104,40 +76,31 @@ class MainActivity : AppCompatActivity() {
         passwordLayout.error = null
 
         // Validate username
-        if (username.isEmpty()) {
-            usernameLayout.error = "Username is required"
-            isValid = false
-        } else if (username.length < 3) {
-            usernameLayout.error = "Username must be at least 3 characters"
+        if (username.isEmpty() || username.length < 3) {
+            usernameLayout.error = "Username is required and must contain at least 3 characters"
             isValid = false
         } else if (!username.matches(Regex("^[a-zA-Z0-9_]+$"))) {
-            usernameLayout.error = "Username can only contain letters, numbers, and underscores"
+            usernameLayout.error = "Username may only contain letters, numbers, and underscores"
             isValid = false
         }
 
         // Validate password
-        if (password.isEmpty()) {
-            passwordLayout.error = "Password is required"
-            isValid = false
-        } else if (password.length < 6) {
-            passwordLayout.error = "Password must be at least 6 characters"
+        if (password.isEmpty() || password.length < 6) {
+            passwordLayout.error = "Password is required and must contain at least 6 characters"
             isValid = false
         }
 
         return isValid
     }
 
-    /**
-     * Login existing user
-     */
     private fun loginUser() {
         val username = etUsername.text.toString().trim()
         val password = etPassword.text.toString().trim()
 
-        showLoading(true)
+        showLoadingIndicator(true)
 
         // Reference to users in Firebase
-        val usersRef = database.child("users").child(username)
+        val usersRef = DATABASE.child("users").child(username)
 
         usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -147,28 +110,25 @@ class MainActivity : AppCompatActivity() {
 
                     // Password correct - successful login
                     if (storedPassword == password) {
-                        showLoading(false)
+                        showLoadingIndicator(false)
                         Toast.makeText(
                             this@MainActivity,
                             "Login successful! Welcome back, $username",
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        // Save login state
-                        saveLoginState(this@MainActivity, username, password)
-
-                        // Navigate to the next activity
-                        navigateToSomeActivity(username)
+                        saveLoginState(username, password)      // Save login state
+                        goToMainMenu()              // Navigate to the next activity
                     }
 
                     // Password incorrect - navigate to FailedLoginActivity
                     else {
-                        showLoading(false)
-                        navigateToFailedLogin(username)
+                        showLoadingIndicator(false)
+                        goToFailedLogin()
                     }
                 } else {
                     // User doesn't exist
-                    showLoading(false)
+                    showLoadingIndicator(false)
                     usernameLayout.error = "Username not found. Please sign up first."
                     Toast.makeText(
                         this@MainActivity,
@@ -179,7 +139,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                showLoading(false)
+                showLoadingIndicator(false)
                 Toast.makeText(
                     this@MainActivity,
                     "Error: ${error.message}",
@@ -189,22 +149,19 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    /**
-     * Sign up new user
-     */
     private fun signUpUser() {
-        val username = etUsername.text.toString().trim()
-        val password = etPassword.text.toString().trim()
-        showLoading(true)
+        val username = etUsername.text.toString().trim()    // Get username
+        val password = etPassword.text.toString().trim()    // Get password
+        showLoadingIndicator(true)
 
         // Check if username already exists
-        val usersRef = database.child("users").child(username)
+        val usersRef = DATABASE.child("users").child(username)
 
         usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     // Username already taken
-                    showLoading(false)
+                    showLoadingIndicator(false)
                     usernameLayout.error = "Username already taken"
                     Toast.makeText(
                         this@MainActivity,
@@ -213,14 +170,12 @@ class MainActivity : AppCompatActivity() {
                     ).show()
                 } else {
                     // Username available, create new user
-                    val username = etUsername.text.toString().trim()  // Get username here
-                    val password = etPassword.text.toString().trim()  // Get password here
                     createNewUser(username, password)
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                showLoading(false)
+                showLoadingIndicator(false)
                 Toast.makeText(
                     this@MainActivity,
                     "Error: ${error.message}",
@@ -230,28 +185,25 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    /**
-     * Create new user in Firebase Database
-     */
     private fun createNewUser(username: String, password: String) {
         val defaultPersonalBests = hashMapOf(
             "squat" to 0,
-            "pushup" to 0,
+            "pushUp" to 0,
             "running" to 0,
-            "benchpress" to 0,
+            "benchPress" to 0,
             "curl" to 0
         )
-
+        val currentDate = SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.US).format(Date())
         val userData = hashMapOf(
             "username" to username,
             "password" to password,
-            "createdAt" to System.currentTimeMillis(),
+            "createdAt" to currentDate,
             "personalBests" to defaultPersonalBests
         )
 
-        database.child("users").child(username).setValue(userData)
+        DATABASE.child("users").child(username).setValue(userData)
             .addOnSuccessListener {
-                showLoading(false)
+                showLoadingIndicator(false)
                 Toast.makeText(
                     this,
                     "Account created successfully! Welcome, $username",
@@ -259,13 +211,13 @@ class MainActivity : AppCompatActivity() {
                 ).show()
 
                 // Save login state
-                saveLoginState(this@MainActivity, username, password)
+                saveLoginState(username, password)
 
                 // Navigate to the next activity
-                navigateToSomeActivity(username)
+                goToMainMenu()
             }
             .addOnFailureListener { e ->
-                showLoading(false)
+                showLoadingIndicator(false)
                 Toast.makeText(
                     this,
                     "Failed to create account: ${e.message}",
@@ -274,52 +226,28 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    /**
-     * Save login state to SharedPreferences
-     */
-    private fun saveLoginState(context: Context, username: String, password: String) {
-        val sp: SharedPreferences =
-            context.getSharedPreferences("${context.packageName}_preferences", MODE_PRIVATE)
+    private fun saveLoginState(username: String, password: String) {
+        val sp = getSharedPreferences("${packageName}_preferences", MODE_PRIVATE)
         sp.edit(commit = true) {
             putString(PREFERENCE_USERNAME, username)
             putString(PREFERENCE_PASSWORD, password)
-            putBoolean("isLoggedIn", true)      // not used in anything else so far
         }
     }
 
-    /**
-     * Navigate to FailedLoginActivity
-     */
-    private fun navigateToFailedLogin(username: String) {
+    private fun goToFailedLogin() {
         val intent = Intent(this, FailedLoginActivity::class.java)
-        intent.putExtra("USERNAME", username)
+        intent.putExtra("USERNAME", etUsername.text.toString().trim())
         startActivity(intent)
     }
 
-    /**
-     * Navigate to the next activity after successful login
-     */
-    private fun navigateToSomeActivity(username: String? = null) {
-        val intent = Intent(this, MainMenuActivity::class.java)
-
-        // Pass username if provided
-        username?.let {
-            intent.putExtra("USERNAME", it)
-        } ?: run {
-            val currentUsername = etUsername.text.toString().trim()
-            if (currentUsername.isNotEmpty()) {
-                intent.putExtra("USERNAME", currentUsername)
-            }
-        }
-
+    private fun goToMainMenu() {
+        val intent = Intent(this, LeaderboardActivity::class.java)
+        intent.putExtra("USERNAME", etUsername.text.toString().trim())
         startActivity(intent)
         finish()
     }
 
-    /**
-     * Show or hide loading indicator
-     */
-    private fun showLoading(show: Boolean) {
+    private fun showLoadingIndicator(show: Boolean) {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
         btnLogin.isEnabled = !show
         btnSignUp.isEnabled = !show
@@ -330,5 +258,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val PREFERENCE_USERNAME = "recentUsername"
         const val PREFERENCE_PASSWORD = "recentPassword"
+        val DATABASE = FirebaseDatabase.getInstance().reference     // singleton database reference
     }
 }

@@ -13,7 +13,7 @@
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My Fitness Journey"
+        android:text="@string/main_menu_title"
         android:textSize="32sp"
         android:textColor="@color/primary_color"
         android:textStyle="bold"
@@ -27,7 +27,7 @@
         android:id="@+id/welcomeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome!"
+        android:text="@string/welcome"
         android:textSize="24sp"
         android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"
@@ -40,7 +40,7 @@
         android:id="@+id/personalBestsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Personal Bests"
+        android:text="@string/personal_bests"
         android:textSize="20sp"
         android:textColor="@color/text_primary"
         android:textStyle="bold"
@@ -76,7 +76,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="🏋️ Squat"
+                android:text="@string/squat"
                 android:textSize="16sp"
                 android:textColor="@color/text_primary" />
 
@@ -84,13 +84,13 @@
                 android:id="@+id/squatBestTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/default_best"
                 android:textSize="16sp"
                 android:textColor="@color/primary_color"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Pushup -->
+        <!-- Push-up -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,15 +101,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="💪 Pushup"
+                android:text="@string/pushUp"
                 android:textSize="16sp"
                 android:textColor="@color/text_primary" />
 
             <TextView
-                android:id="@+id/pushupBestTextView"
+                android:id="@+id/pushUpBestTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/default_best"
                 android:textSize="16sp"
                 android:textColor="@color/primary_color"
                 android:textStyle="bold" />
@@ -126,7 +126,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="🏃 Running"
+                android:text="@string/running"
                 android:textSize="16sp"
                 android:textColor="@color/text_primary" />
 
@@ -134,7 +134,7 @@
                 android:id="@+id/runningBestTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/default_best"
                 android:textSize="16sp"
                 android:textColor="@color/primary_color"
                 android:textStyle="bold" />
@@ -151,15 +151,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="🏋️ Bench Press"
+                android:text="@string/bench_press"
                 android:textSize="16sp"
                 android:textColor="@color/text_primary" />
 
             <TextView
-                android:id="@+id/benchpressBestTextView"
+                android:id="@+id/benchPressBestTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/default_best"
                 android:textSize="16sp"
                 android:textColor="@color/primary_color"
                 android:textStyle="bold" />
@@ -175,7 +175,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="💪 Curl"
+                android:text="@string/curl"
                 android:textSize="16sp"
                 android:textColor="@color/text_primary" />
 
@@ -183,7 +183,7 @@
                 android:id="@+id/curlBestTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/default_best"
                 android:textSize="16sp"
                 android:textColor="@color/primary_color"
                 android:textStyle="bold" />
@@ -196,7 +196,7 @@
         android:id="@+id/btnPlayGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PLAY GAME"
+        android:text="@string/play_game"
         android:textSize="20sp"
         android:textAllCaps="true"
         app:cornerRadius="16dp"

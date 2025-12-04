@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gamifiedfitnesstracker.MainActivity.Companion.DATABASE
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -23,8 +24,8 @@ class LeaderboardActivity : AppCompatActivity() {
     private lateinit var rvLeaderboard: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var emptyStateLayout: LinearLayout
-    private lateinit var btnSortCalories: Button
-    private lateinit var btnSortDuration: Button
+    private lateinit var btnSortRun: Button
+    private lateinit var btnSortSquat: Button
     private lateinit var tvHeaderMetric: TextView
     private lateinit var btnBack: ImageButton
 
@@ -32,11 +33,11 @@ class LeaderboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_leaderboard)
 
-        val workoutIdIn = intent.getStringExtra("WORKOUT_ID") ?: ""
-        leaderboard = Leaderboard(workoutIdIn)
+        val username = intent.getStringExtra("USERNAME") ?: ""
+        leaderboard = Leaderboard(username)
 
-        clearTestData()
-        checkAndPopulateIfEmpty()
+//        clearTestData()
+//        checkAndPopulateIfEmpty()
 
         // Initialize UI components
         initializeViews()
@@ -44,7 +45,11 @@ class LeaderboardActivity : AppCompatActivity() {
         setupClickListeners()
 
         // Load leaderboard data
-        loadLeaderboardData()
+        showLoading(true)
+        leaderboard.loadLeaderboardData(CustomValueEventListener())
+        leaderboard.sortAndUpdateLeaderboard()
+
+
     }
 
     /**
@@ -54,8 +59,8 @@ class LeaderboardActivity : AppCompatActivity() {
         rvLeaderboard = findViewById(R.id.rvLeaderboard)
         progressBar = findViewById(R.id.progressBar)
         emptyStateLayout = findViewById(R.id.emptyStateLayout)
-        btnSortCalories = findViewById(R.id.btnSortCalories)
-        btnSortDuration = findViewById(R.id.btnSortDuration)
+        btnSortRun = findViewById(R.id.btnSortRun)
+        btnSortSquat = findViewById(R.id.btnSortSquat)
         tvHeaderMetric = findViewById(R.id.tvHeaderMetric)
         btnBack = findViewById(R.id.btnBack)
 
@@ -71,12 +76,9 @@ class LeaderboardActivity : AppCompatActivity() {
         rvLeaderboard.adapter = leaderboard.getAdapter()
     }
 
-    /**
-     * Setup click listeners for sorting buttons
-     */
     private fun setupClickListeners() {
-        btnSortCalories.setOnClickListener(SortButtonListener(Leaderboard.SortMode.CALORIES))
-        btnSortDuration.setOnClickListener(SortButtonListener(Leaderboard.SortMode.DURATION))
+        btnSortRun.setOnClickListener(SortButtonListener(Leaderboard.SortMode.RUN))
+        btnSortSquat.setOnClickListener(SortButtonListener(Leaderboard.SortMode.SQUAT))
         btnBack.setOnClickListener { finish() }
     }
 
@@ -89,16 +91,13 @@ class LeaderboardActivity : AppCompatActivity() {
         }
 
         override fun onClick(v: View?) {
+//            Log.w("MainActivity", "clicked inside $${this@LeaderboardActivity.resources.getResourceEntryName(v!!.id)}")
             leaderboard.setSortMode(sortMode)
             leaderboard.sortAndUpdateLeaderboard()
             scrollToCurrentUser()
             updateSortButtonColors()
             tvHeaderMetric.text =
-                getString(if (sortMode == Leaderboard.SortMode.CALORIES) R.string.calories else R.string.duration)
-//            Log.w(
-//                "MainActivity",
-//                "$sortMode clicked\t current sort mode = ${leaderboard.getCurrentSortMode()}"
-//            )
+                getString(if (sortMode == Leaderboard.SortMode.RUN) R.string.run_enum else R.string.squat_enum)
         }
 
     }
@@ -108,8 +107,38 @@ class LeaderboardActivity : AppCompatActivity() {
      */
     private fun updateSortButtonColors() {
         when (leaderboard.getCurrentSortMode()) {
-            Leaderboard.SortMode.CALORIES -> {
-                btnSortCalories.apply {
+            Leaderboard.SortMode.NONE -> {
+                btnSortRun.apply {
+                    setBackgroundColor(
+                        ContextCompat.getColor(
+                            this@LeaderboardActivity,
+                            android.R.color.transparent
+                        )
+                    )
+                    setTextColor(
+                        ContextCompat.getColor(
+                            this@LeaderboardActivity,
+                            R.color.primary_color
+                        )
+                    )
+                }
+                btnSortSquat.apply {
+                    setBackgroundColor(
+                        ContextCompat.getColor(
+                            this@LeaderboardActivity,
+                            android.R.color.transparent
+                        )
+                    )
+                    setTextColor(
+                        ContextCompat.getColor(
+                            this@LeaderboardActivity,
+                            R.color.primary_color
+                        )
+                    )
+                }
+            }
+            Leaderboard.SortMode.RUN -> {
+                btnSortRun.apply {
                     setBackgroundColor(
                         ContextCompat.getColor(
                             this@LeaderboardActivity,
@@ -118,7 +147,7 @@ class LeaderboardActivity : AppCompatActivity() {
                     )
                     setTextColor(ContextCompat.getColor(this@LeaderboardActivity, R.color.white))
                 }
-                btnSortDuration.apply {
+                btnSortSquat.apply {
                     setBackgroundColor(
                         ContextCompat.getColor(
                             this@LeaderboardActivity,
@@ -134,8 +163,8 @@ class LeaderboardActivity : AppCompatActivity() {
                 }
             }
 
-            Leaderboard.SortMode.DURATION -> {
-                btnSortCalories.apply {
+            Leaderboard.SortMode.SQUAT -> {
+                btnSortRun.apply {
                     setBackgroundColor(
                         ContextCompat.getColor(
                             this@LeaderboardActivity,
@@ -149,7 +178,7 @@ class LeaderboardActivity : AppCompatActivity() {
                         )
                     )
                 }
-                btnSortDuration.apply {
+                btnSortSquat.apply {
                     setBackgroundColor(
                         ContextCompat.getColor(
                             this@LeaderboardActivity,
@@ -171,18 +200,16 @@ class LeaderboardActivity : AppCompatActivity() {
                 for (playerSnapshot in snapshot.children) {
                     val player = playerSnapshot.getValue(Player::class.java)
                     player?.let {
-                        it.userId = playerSnapshot.key ?: ""
-                        playersList.add(it)
+                        it.username = playerSnapshot.key ?: ""
+                        if (it.runBest != null) playersList.add(it)
                     }
                 }
 
                 if (playersList.isNotEmpty()) {
                     leaderboard.sortAndUpdateLeaderboard()
                     scrollToCurrentUser()
-                    showEmptyState(false)
-                } else {
-                    showEmptyState(true)
                 }
+                showEmptyState(false)
             } else {
                 showEmptyState(true)
             }
@@ -204,25 +231,12 @@ class LeaderboardActivity : AppCompatActivity() {
     }
 
     /**
-     * Load leaderboard data from Firebase Database
-     */
-    private fun loadLeaderboardData() {
-        showLoading(true)
-
-        // Reference to the workout leaderboard in Firebase
-        // Structure: workouts/{workoutId}/players/{userId}
-        val database = leaderboard.getDatabase()
-        val workoutId = leaderboard.getWorkoutId()
-        val leaderboardRef = database.child("workouts").child(workoutId).child("players")
-        leaderboardRef.addValueEventListener(CustomValueEventListener())
-    }
-
-    /**
      * Scroll RecyclerView to show current user's position
      */
     private fun scrollToCurrentUser() {
+        val currentUsername = intent.getStringExtra("USERNAME")!!
         val currentUserIndex =
-            leaderboard.getPlayers().indexOfFirst { it.userId == leaderboard.getCurrentUserId() }
+            leaderboard.getPlayers().indexOfFirst { it.username == currentUsername }
         if (currentUserIndex != -1) {
             rvLeaderboard.scrollToPosition(currentUserIndex)
         }
@@ -254,57 +268,57 @@ class LeaderboardActivity : AppCompatActivity() {
      *
      * IMPORTANT: Remove or comment out this function before production release!
      */
-    private fun populateTestData() {
-        val workoutId = intent.getStringExtra("WORKOUT_ID") ?: "test_workout_1"
-        val workoutRef =
-            leaderboard.getDatabase().child("workouts").child(workoutId).child("players")
-
-        // Create a list of test players with varied data
-        val testPlayers = ArrayList<Player>()
-        for (i in 0..4) {
-            testPlayers.add(
-                Player(
-                    "test_user_$i",
-                    "SpeedyRunner$i",
-                    (i + 1) * 100 + i * 10,
-                    (i + 1) * 60000,
-                    hashMapOf(
-//                        Workout.SQUAT to (i + 1) * 20 + i * 4,
-//                        Workout.PUSH_UP to (i + 1) * 15 + i * 4,
-                        Workout.RUN to i + 7
-                    )
-                )
-            )
-        }
-
-        // Upload each test player to Firebase
-        testPlayers.forEach { player ->
-            val playerData = hashMapOf(
-                "username" to player.username,
-                "caloriesBurned" to player.caloriesBurned,
-                "workoutDuration" to player.workoutDuration,
-                "workoutRecords" to hashMapOf(
-//                    "squatRecord" to player.workoutRecords.get(Workout.SQUAT),
-//                    "push_upRecord" to player.workoutRecords.get(Workout.PUSH_UP),
-                    "runRecord" to player.workoutRecords.get(Workout.RUN)
-                )
-            )
-
-            workoutRef.child(player.userId!!).setValue(playerData)
-                .addOnSuccessListener {
-                    Log.d("LeaderboardTest", "Added test user: ${player.username}")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("LeaderboardTest", "Error adding test user: ${e.message}")
-                }
-        }
-
-        Toast.makeText(
-            this,
-            "Test data populated! Refresh to see leaderboard.",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
+//    private fun populateTestData() {
+//        val workoutId = intent.getStringExtra("WORKOUT_ID") ?: "test_workout_1"
+//        val workoutRef =
+//            DATABASE.child("workouts").child(workoutId).child("players")
+//
+//        // Create a list of test players with varied data
+//        val testPlayers = ArrayList<Player>()
+//        for (i in 0..4) {
+//            testPlayers.add(
+//                Player(
+//                    "test_user_$i",
+//                    "SpeedyRunner$i",
+//                    (i + 1) * 100 + i * 10,
+//                    (i + 1) * 60000,
+//                    hashMapOf(
+////                        Workout.SQUAT to (i + 1) * 20 + i * 4,
+////                        Workout.PUSH_UP to (i + 1) * 15 + i * 4,
+//                        Workout.RUN to i + 7
+//                    )
+//                )
+//            )
+//        }
+//
+//        // Upload each test player to Firebase
+//        testPlayers.forEach { player ->
+//            val playerData = hashMapOf(
+//                "username" to player.username,
+//                "caloriesBurned" to player.caloriesBurned,
+//                "workoutDuration" to player.workoutDuration,
+//                "workoutRecords" to hashMapOf(
+////                    "squatRecord" to player.workoutRecords.get(Workout.SQUAT),
+////                    "push_upRecord" to player.workoutRecords.get(Workout.PUSH_UP),
+//                    "runRecord" to player.workoutRecords.get(Workout.RUN)
+//                )
+//            )
+//
+//            workoutRef.child(player.userId!!).setValue(playerData)
+//                .addOnSuccessListener {
+//                    Log.d("LeaderboardTest", "Added test user: ${player.username}")
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.e("LeaderboardTest", "Error adding test user: ${e.message}")
+//                }
+//        }
+//
+//        Toast.makeText(
+//            this,
+//            "Test data populated! Refresh to see leaderboard.",
+//            Toast.LENGTH_SHORT
+//        ).show()
+//    }
 
     /**
      * Clear all test data from Firebase (useful for cleanup)
@@ -312,7 +326,7 @@ class LeaderboardActivity : AppCompatActivity() {
     private fun clearTestData() {
         val workoutId = intent.getStringExtra("WORKOUT_ID") ?: "test_workout_1"
         val workoutRef =
-            leaderboard.getDatabase().child("workouts").child(workoutId).child("players")
+            DATABASE.child("workouts").child(workoutId).child("players")
 
         workoutRef.removeValue()
             .addOnSuccessListener {
@@ -334,13 +348,13 @@ class LeaderboardActivity : AppCompatActivity() {
     private fun checkAndPopulateIfEmpty() {
         val workoutId = intent.getStringExtra("WORKOUT_ID") ?: "test_workout_1"
         val workoutRef =
-            leaderboard.getDatabase().child("workouts").child(workoutId).child("players")
+            DATABASE.child("workouts").child(workoutId).child("players")
 
         workoutRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists() || snapshot.childrenCount == 0L) {
                     Log.d("LeaderboardTest", "Database empty, populating test data...")
-                    populateTestData()
+//                    populateTestData()
                 } else {
                     Log.d(
                         "LeaderboardTest",

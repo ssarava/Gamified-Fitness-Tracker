@@ -1,81 +1,117 @@
 package com.example.gamifiedfitnesstracker
 
+import android.util.Log
+import com.example.gamifiedfitnesstracker.MainActivity.Companion.DATABASE
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.GenericTypeIndicator
+import com.google.firebase.database.ValueEventListener
 
 class Leaderboard {
 
     private var playersList = ArrayList<Player>()
 
     // Data
-    private var currentSortMode = SortMode.CALORIES
-    private var currentUserId: String = ""
-    private var workoutId: String = ""
-
-    // Firebase
-    private var database = FirebaseDatabase.getInstance().reference
+    private var currentSortMode = SortMode.NONE
+    private var currentUsername: String
 
     // Initialize Firebase
-    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var leaderboardAdapter: LeaderboardAdapter
 
-    constructor(workoutIdIn: String) {
-        currentUserId = auth.currentUser?.uid ?: ""
-
+    constructor(usernameIn: String) {
+        // Get current user from intent
+        currentUsername = usernameIn
         leaderboardAdapter = LeaderboardAdapter()
-
-        // Get workout ID from intent
-        workoutId = workoutIdIn
     }
 
-    fun getAdapter(): LeaderboardAdapter {
-        return leaderboardAdapter
-    }
-
-    fun getDatabase() : DatabaseReference {
-        return database
-    }
-
-    fun getWorkoutId(): String {
-        return workoutId
-    }
-
-    fun getCurrentUserId() : String {
-        return currentUserId
-    }
+    fun getAdapter() = leaderboardAdapter
 
     fun setSortMode(mode: SortMode) {
         if (currentSortMode != mode) currentSortMode = mode
     }
 
-    fun getCurrentSortMode(): SortMode {
-        return currentSortMode
-    }
+    fun getCurrentSortMode() = currentSortMode
 
-    fun getPlayers(): ArrayList<Player> {
-        return playersList
-    }
+    fun getPlayers() = playersList
 
     enum class SortMode {
-        CALORIES, DURATION
+        NONE, RUN, SQUAT
     }
+
+    fun getCurrentUsername() = currentUsername
 
     /**
      * Sort players based on current sort mode and update the adapter
      */
     fun sortAndUpdateLeaderboard() {
+        // needs updating
         when (currentSortMode) {
-            SortMode.CALORIES -> playersList.sortByDescending { it.caloriesBurned }
-            SortMode.DURATION -> playersList.sortByDescending { it.workoutDuration }
+            SortMode.NONE -> return
+            SortMode.RUN -> playersList.sortByDescending { it.runBest }
+            SortMode.SQUAT -> playersList.sortByDescending { it.squatBest }
         }
-
-        // Update ranks after sorting
-//        playersList.forEachIndexed { index, player -> player.rank = index + 1 }
-
         leaderboardAdapter.notifyDataSetChanged()
-
     }
 
+    /**
+     * Load leaderboard data from Firebase Database
+     */
+    fun loadLeaderboardData(listener: ValueEventListener) {
+        val leaderboardRef = DATABASE.child("users")
+        leaderboardRef.addValueEventListener(listener)
 
+        val usersRef = DATABASE.child("users")
+        usersRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val generic = object : GenericTypeIndicator<HashMap<String, Any>>() {}
+                    val users: HashMap<String, Any> = snapshot.getValue(generic)!!
+
+                    for (user in users.keys.toList()) {
+                        val personalBestsRef = usersRef.child(user).child("personalBests")
+
+                        personalBestsRef.addListenerForSingleValueEvent(object :
+                            ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                if (snapshot.exists()) {
+                                    val cls = Int::class.java
+
+                                    // Load each exercise's personal best
+                                    val squat = snapshot.child("squat").getValue(cls) ?: 0
+                                    val pushUp = snapshot.child("pushUp").getValue(cls) ?: 0
+                                    val run = snapshot.child("running").getValue(cls) ?: 0
+                                    val bp = snapshot.child("benchPress").getValue(cls) ?: 0
+                                    val curl = snapshot.child("curl").getValue(cls) ?: 0
+
+                                    // update playersList
+                                    val player = Player(
+                                        user,
+                                        bp,
+                                        curl,
+                                        pushUp,
+                                        run,
+                                        squat
+                                    )
+                                    playersList.add(player)
+                                    // Update UI
+//                    updatePersonalBestsUI(squat, pushUp, run, bp, curl)
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                println("Database Error ${error.code}: ${error.message}")   // error debug message
+                            }
+                        })
+                    }
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
 }
