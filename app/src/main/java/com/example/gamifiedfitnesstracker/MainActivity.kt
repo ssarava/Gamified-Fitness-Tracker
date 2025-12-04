@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity() {
                         saveLoginState(this@MainActivity, username, password)
 
                         // Navigate to the next activity
-                        navigateToSomeActivity()
+                        navigateToSomeActivity(username)
                     }
 
                     // Password incorrect - navigate to FailedLoginActivity
@@ -213,6 +213,8 @@ class MainActivity : AppCompatActivity() {
                     ).show()
                 } else {
                     // Username available, create new user
+                    val username = etUsername.text.toString().trim()  // Get username here
+                    val password = etPassword.text.toString().trim()  // Get password here
                     createNewUser(username, password)
                 }
             }
@@ -232,13 +234,19 @@ class MainActivity : AppCompatActivity() {
      * Create new user in Firebase Database
      */
     private fun createNewUser(username: String, password: String) {
+        val defaultPersonalBests = hashMapOf(
+            "squat" to 0,
+            "pushup" to 0,
+            "running" to 0,
+            "benchpress" to 0,
+            "curl" to 0
+        )
+
         val userData = hashMapOf(
             "username" to username,
             "password" to password,
             "createdAt" to System.currentTimeMillis(),
-            "profileImageUrl" to "",
-            "totalWorkouts" to 0,
-            "totalCaloriesBurned" to 0
+            "personalBests" to defaultPersonalBests
         )
 
         database.child("users").child(username).setValue(userData)
@@ -254,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                 saveLoginState(this@MainActivity, username, password)
 
                 // Navigate to the next activity
-                navigateToSomeActivity()
+                navigateToSomeActivity(username)
             }
             .addOnFailureListener { e ->
                 showLoading(false)
@@ -291,13 +299,19 @@ class MainActivity : AppCompatActivity() {
     /**
      * Navigate to the next activity after successful login
      */
-    private fun navigateToSomeActivity() {
-        // TODO: Replace with your actual main activity
+    private fun navigateToSomeActivity(username: String? = null) {
+        val intent = Intent(this, MainMenuActivity::class.java)
 
-        val intent = Intent(
-            this,
-            LeaderboardActivity::class.java
-        )      // need to change 'LeaderboardActivity' to something else
+        // Pass username if provided
+        username?.let {
+            intent.putExtra("USERNAME", it)
+        } ?: run {
+            val currentUsername = etUsername.text.toString().trim()
+            if (currentUsername.isNotEmpty()) {
+                intent.putExtra("USERNAME", currentUsername)
+            }
+        }
+
         startActivity(intent)
         finish()
     }
