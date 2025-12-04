@@ -24,6 +24,9 @@ class LeaderboardActivity : AppCompatActivity() {
     private lateinit var rvLeaderboard: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var emptyStateLayout: LinearLayout
+    private lateinit var btnSortBenchPress: Button
+    private lateinit var btnSortCurl: Button
+    private lateinit var btnSortPushUp: Button
     private lateinit var btnSortRun: Button
     private lateinit var btnSortSquat: Button
     private lateinit var tvHeaderMetric: TextView
@@ -52,13 +55,14 @@ class LeaderboardActivity : AppCompatActivity() {
 
     }
 
-    /**
-     * Initialize all UI components
-     */
     private fun initializeViews() {
         rvLeaderboard = findViewById(R.id.rvLeaderboard)
         progressBar = findViewById(R.id.progressBar)
         emptyStateLayout = findViewById(R.id.emptyStateLayout)
+
+        btnSortBenchPress = findViewById(R.id.btnSortBenchPress)
+        btnSortCurl = findViewById(R.id.btnSortCurl)
+        btnSortPushUp = findViewById(R.id.btnSortPushUp)
         btnSortRun = findViewById(R.id.btnSortRun)
         btnSortSquat = findViewById(R.id.btnSortSquat)
         tvHeaderMetric = findViewById(R.id.tvHeaderMetric)
@@ -68,15 +72,16 @@ class LeaderboardActivity : AppCompatActivity() {
         updateSortButtonColors()
     }
 
-    /**
-     * Setup RecyclerView with adapter and layout manager
-     */
+    // Setup RecyclerView with adapter and layout manager
     private fun setupRecyclerView() {
         rvLeaderboard.layoutManager = LinearLayoutManager(this)
         rvLeaderboard.adapter = leaderboard.getAdapter()
     }
 
     private fun setupClickListeners() {
+        btnSortBenchPress.setOnClickListener(SortButtonListener(Leaderboard.SortMode.BENCH_PRESS))
+        btnSortCurl.setOnClickListener(SortButtonListener(Leaderboard.SortMode.CURL))
+        btnSortPushUp.setOnClickListener(SortButtonListener(Leaderboard.SortMode.PUSH_UP))
         btnSortRun.setOnClickListener(SortButtonListener(Leaderboard.SortMode.RUN))
         btnSortSquat.setOnClickListener(SortButtonListener(Leaderboard.SortMode.SQUAT))
         btnBack.setOnClickListener { finish() }
@@ -91,15 +96,25 @@ class LeaderboardActivity : AppCompatActivity() {
         }
 
         override fun onClick(v: View?) {
-//            Log.w("MainActivity", "clicked inside $${this@LeaderboardActivity.resources.getResourceEntryName(v!!.id)}")
             leaderboard.setSortMode(sortMode)
             leaderboard.sortAndUpdateLeaderboard()
             scrollToCurrentUser()
             updateSortButtonColors()
             tvHeaderMetric.text =
-                getString(if (sortMode == Leaderboard.SortMode.RUN) R.string.run_enum else R.string.squat_enum)
+                when (sortMode) {
+                    Leaderboard.SortMode.BENCH_PRESS -> getString(R.string.bp_enum)
+                    Leaderboard.SortMode.CURL -> getString(R.string.curl_enum)
+                    Leaderboard.SortMode.NONE -> ""
+                    Leaderboard.SortMode.PUSH_UP -> getString(R.string.pushUp_enum)
+                    Leaderboard.SortMode.RUN -> getString(R.string.run_enum)
+                    Leaderboard.SortMode.SQUAT -> getString(R.string.squat_enum)
+                }
         }
+    }
 
+    private fun applyToButtons(target: Button, backgroundColor: Int, textColor: Int) {
+        target.setBackgroundColor(ContextCompat.getColor(this, backgroundColor))
+        target.setTextColor(ContextCompat.getColor(this, textColor))
     }
 
     /**
@@ -107,86 +122,72 @@ class LeaderboardActivity : AppCompatActivity() {
      */
     private fun updateSortButtonColors() {
         when (leaderboard.getCurrentSortMode()) {
-            Leaderboard.SortMode.NONE -> {
-                btnSortRun.apply {
-                    setBackgroundColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            android.R.color.transparent
-                        )
-                    )
-                    setTextColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            R.color.primary_color
-                        )
-                    )
-                }
-                btnSortSquat.apply {
-                    setBackgroundColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            android.R.color.transparent
-                        )
-                    )
-                    setTextColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            R.color.primary_color
-                        )
-                    )
-                }
+            Leaderboard.SortMode.BENCH_PRESS -> {
+                applyToButtons(btnSortBenchPress, R.color.primary_color, R.color.white)
+                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
             }
+
+            Leaderboard.SortMode.CURL -> {
+                applyToButtons(
+                    btnSortBenchPress,
+                    android.R.color.transparent,
+                    R.color.primary_color
+                )
+                applyToButtons(btnSortCurl, R.color.primary_color, R.color.white)
+                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
+            }
+
+            Leaderboard.SortMode.PUSH_UP -> {
+                applyToButtons(
+                    btnSortBenchPress,
+                    android.R.color.transparent,
+                    R.color.primary_color
+                )
+                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortPushUp, R.color.primary_color, R.color.white)
+                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
+            }
+
+            Leaderboard.SortMode.NONE -> {
+                applyToButtons(
+                    btnSortBenchPress,
+                    android.R.color.transparent,
+                    R.color.primary_color
+                )
+                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
+            }
+
             Leaderboard.SortMode.RUN -> {
-                btnSortRun.apply {
-                    setBackgroundColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            R.color.primary_color
-                        )
-                    )
-                    setTextColor(ContextCompat.getColor(this@LeaderboardActivity, R.color.white))
-                }
-                btnSortSquat.apply {
-                    setBackgroundColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            android.R.color.transparent
-                        )
-                    )
-                    setTextColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            R.color.primary_color
-                        )
-                    )
-                }
+                applyToButtons(
+                    btnSortBenchPress,
+                    android.R.color.transparent,
+                    R.color.primary_color
+                )
+                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortRun, R.color.primary_color, R.color.white)
+                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
             }
 
             Leaderboard.SortMode.SQUAT -> {
-                btnSortRun.apply {
-                    setBackgroundColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            android.R.color.transparent
-                        )
-                    )
-                    setTextColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            R.color.primary_color
-                        )
-                    )
-                }
-                btnSortSquat.apply {
-                    setBackgroundColor(
-                        ContextCompat.getColor(
-                            this@LeaderboardActivity,
-                            R.color.primary_color
-                        )
-                    )
-                    setTextColor(ContextCompat.getColor(this@LeaderboardActivity, R.color.white))
-                }
+                applyToButtons(
+                    btnSortBenchPress,
+                    android.R.color.transparent,
+                    R.color.primary_color
+                )
+                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
+                applyToButtons(btnSortSquat, R.color.primary_color, R.color.white)
             }
         }
     }

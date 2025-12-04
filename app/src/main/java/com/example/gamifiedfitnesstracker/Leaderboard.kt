@@ -1,8 +1,6 @@
 package com.example.gamifiedfitnesstracker
 
-import android.util.Log
 import com.example.gamifiedfitnesstracker.MainActivity.Companion.DATABASE
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.GenericTypeIndicator
@@ -11,8 +9,6 @@ import com.google.firebase.database.ValueEventListener
 class Leaderboard {
 
     private var playersList = ArrayList<Player>()
-
-    // Data
     private var currentSortMode = SortMode.NONE
     private var currentUsername: String
 
@@ -35,19 +31,17 @@ class Leaderboard {
 
     fun getPlayers() = playersList
 
-    enum class SortMode {
-        NONE, RUN, SQUAT
-    }
-
     fun getCurrentUsername() = currentUsername
 
     /**
      * Sort players based on current sort mode and update the adapter
      */
     fun sortAndUpdateLeaderboard() {
-        // needs updating
         when (currentSortMode) {
             SortMode.NONE -> return
+            SortMode.BENCH_PRESS -> playersList.sortByDescending { it.bpBest }
+            SortMode.CURL -> playersList.sortByDescending { it.curlBest }
+            SortMode.PUSH_UP -> playersList.sortByDescending { it.pushUpBest }
             SortMode.RUN -> playersList.sortByDescending { it.runBest }
             SortMode.SQUAT -> playersList.sortByDescending { it.squatBest }
         }
@@ -113,5 +107,9 @@ class Leaderboard {
             }
 
         })
+    }
+
+    enum class SortMode {
+        NONE, BENCH_PRESS, CURL, PUSH_UP, RUN, SQUAT
     }
 }

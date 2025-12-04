@@ -3,7 +3,10 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="workout_challenge">Workout Challenge</string>
     <string name="sort_by">Sort by:</string>
+    <string name="bp_enum">Bench</string>
+    <string name="curl_enum">Curl</string>
     <string name="run_enum">Run</string>
+    <string name="pushUp_enum">Push up</string>
     <string name="squat_enum">Squat</string>
     <string name="rank">Rank</string>
     <string name="player">Player</string>

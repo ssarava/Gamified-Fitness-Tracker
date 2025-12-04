@@ -6,8 +6,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>() {
 
@@ -38,10 +36,29 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
 
         // Set metric value based on current sort mode
         holder.tvMetricValue.text =
-            if (leaderboard.getCurrentSortMode() == Leaderboard.SortMode.RUN)
-                "${player.runBest} mile${if (player.runBest == 1) "" else "s"}"
-            else
-                "${player.squatBest} rep${if (player.squatBest == 1) "" else "s"}"
+            when (leaderboard.getCurrentSortMode()) {
+                Leaderboard.SortMode.BENCH_PRESS -> {
+                    "${player.bpBest} rep${if (player.bpBest == 1) "" else "s"}"
+                }
+
+                Leaderboard.SortMode.CURL -> {
+                    "${player.curlBest} rep${if (player.curlBest == 1) "" else "s"}"
+                }
+
+                Leaderboard.SortMode.NONE -> ""
+
+                Leaderboard.SortMode.PUSH_UP -> {
+                    "${player.pushUpBest} rep${if (player.pushUpBest == 1) "" else "s"}"
+                }
+
+                Leaderboard.SortMode.RUN -> {
+                    "${player.runBest} mile${if (player.runBest == 1) "" else "s"}"
+                }
+
+                Leaderboard.SortMode.SQUAT -> {
+                    "${player.squatBest} rep${if (player.squatBest == 1) "" else "s"}"
+                }
+            }
 
         // Highlight current user
         val isCurrUser = player.username == leaderboard.getCurrentUsername()
@@ -59,29 +76,16 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
             )
         )
 
-        if (isCurrUser)
-            holder.tvUsername.text =
-//                "${player.username} (You)"
+        if (isCurrUser) holder.tvUsername.text =
                 holder.view.context.getString(R.string.tvUsername_text_you, player.username)
 
 
         // Special styling for top 3 ranks
         when (position + 1) {
-            1 -> {
-                styleRank(holder, R.drawable.rank_badge_gold, R.color.gold)
-            }
-
-            2 -> {
-                styleRank(holder, R.drawable.rank_badge_silver, R.color.silver)
-            }
-
-            3 -> {
-                styleRank(holder, R.drawable.rank_badge_bronze, R.color.bronze)
-            }
-
-            else -> {
-                styleRank(holder, R.drawable.rank_badge_default, R.color.text_secondary)
-            }
+            1 -> styleRank(holder, R.drawable.rank_badge_gold, R.color.gold)
+            2 -> styleRank(holder, R.drawable.rank_badge_silver, R.color.silver)
+            3 -> styleRank(holder, R.drawable.rank_badge_bronze, R.color.bronze)
+            else -> styleRank(holder, R.drawable.rank_badge_default, R.color.text_secondary)
         }
     }
 
@@ -92,25 +96,5 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
         )
     }
 
-    override fun getItemCount(): Int {
-        return LeaderboardActivity.leaderboard.getPlayers().size
-    }
-
-    /**
-     * Format duration from milliseconds to readable string
-     */
-    private fun formatDuration(durationMillis: Long): String {
-        val hours = TimeUnit.MILLISECONDS.toHours(durationMillis)
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis) % 60
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis) % 60
-
-        return when {
-            hours > 0 ->
-                String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds)
-//                String.format("%02d:%02d:%02d", hours, minutes, seconds)
-            else ->
-//                String.format("%02d:%02d", minutes, seconds)
-                String.format(Locale.US, "%02d:%02d", minutes, seconds)
-        }
-    }
+    override fun getItemCount() = LeaderboardActivity.leaderboard.getPlayers().size
 }

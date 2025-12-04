@@ -75,6 +75,8 @@
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="12dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerLayout">
@@ -82,26 +84,59 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/sort_by"
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- Run Button -->
         <Button
-            android:id="@+id/btnSortRun"
+            android:id="@+id/btnSortBenchPress"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="@string/run_enum"
+            android:text="@string/bp_enum"
+            android:textSize="10sp"
+            app:cornerRadius="20dp"
+            app:strokeColor="@color/primary_color"
+            app:strokeWidth="2dp" />
+
+        <Button
+            android:id="@+id/btnSortCurl"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/curl_enum"
             android:textSize="12sp"
             app:cornerRadius="20dp"
             app:strokeColor="@color/primary_color"
             app:strokeWidth="2dp" />
 
-        <!-- Squat Button -->
+        <Button
+            android:id="@+id/btnSortPushUp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pushUp_enum"
+            android:textSize="10sp"
+            app:cornerRadius="20dp"
+            app:strokeColor="@color/primary_color"
+            app:strokeWidth="2dp" />
+
+        <Button
+            android:id="@+id/btnSortRun"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/run_enum"
+            android:textSize="13sp"
+            app:cornerRadius="20dp"
+            app:strokeColor="@color/primary_color"
+            app:strokeWidth="2dp" />
+
         <Button
             android:id="@+id/btnSortSquat"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -109,10 +144,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/squat_enum"
-            android:textSize="12sp"
+            android:textSize="10sp"
             app:cornerRadius="20dp"
             app:strokeColor="@color/primary_color"
             app:strokeWidth="2dp" />
+
+
 
     </LinearLayout>
 
