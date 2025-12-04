@@ -74,6 +74,7 @@ class Leaderboard {
 //        playersList.forEachIndexed { index, player -> player.rank = index + 1 }
 
         leaderboardAdapter.notifyDataSetChanged()
+
     }
 
 

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>() {
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val tvRank: TextView = view.findViewById(R.id.tvRank)
         val tvUsername: TextView = view.findViewById(R.id.tvUsername)
         val tvMetricValue: TextView = view.findViewById(R.id.tvMetricValue)
@@ -32,7 +32,7 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
 
         // Set rank
 //        holder.tvRank.text = player.rank.toString()
-        holder.tvRank.text = (position + 1).toString()
+        (position + 1).toString().also { holder.tvRank.text = it }
 
         // Set username
         holder.tvUsername.text = player.username
@@ -60,7 +60,11 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
             )
         )
 
-        if (isCurrUser) holder.tvUsername.text = "${player.username} (You)"
+        if (isCurrUser)
+            holder.tvUsername.text =
+//                "${player.username} (You)"
+                holder.view.context.getString(R.string.tvUsername_text_you, player.username)
+
 
         // Special styling for top 3 ranks
         when (position + 1) {

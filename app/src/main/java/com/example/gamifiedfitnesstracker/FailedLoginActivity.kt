@@ -40,7 +40,7 @@ class FailedLoginActivity : AppCompatActivity() {
      */
     private fun displayErrorMessage(username: String) {
         // Set the main error message
-        tvErrorMessage.text = "User with username"
+//        tvErrorMessage.text = "User with username"
 
         // Display the username prominently
         tvUsername.text = username
