@@ -14,10 +14,11 @@ data class Player(
 }
 
 // for now: squats, push-ups, runs
-enum class Workout(val displayName: String) {
-    SQUAT("Squat"),
-    PUSH_UP("Push Up"),
+enum class Workout(val displayName: String? = null) {
     BENCH_PRESS("Bench Press"),
     CURL("Curl"),
-    RUN("Run")
+    PUSH_UP("Push Up"),
+    RUN("Run"),
+    SQUAT("Squat"),
+    NONE
 }

@@ -9,7 +9,7 @@ import com.google.firebase.database.ValueEventListener
 class Leaderboard {
 
     private var playersList = ArrayList<Player>()
-    private var currentSortMode = SortMode.NONE
+    private var currentSortMode = Workout.NONE
     private var currentUsername: String
 
     // Initialize Firebase
@@ -23,7 +23,7 @@ class Leaderboard {
 
     fun getAdapter() = leaderboardAdapter
 
-    fun setSortMode(mode: SortMode) {
+    fun setSortMode(mode: Workout) {
         if (currentSortMode != mode) currentSortMode = mode
     }
 
@@ -38,12 +38,12 @@ class Leaderboard {
      */
     fun sortAndUpdateLeaderboard() {
         when (currentSortMode) {
-            SortMode.NONE -> return
-            SortMode.BENCH_PRESS -> playersList.sortByDescending { it.bpBest }
-            SortMode.CURL -> playersList.sortByDescending { it.curlBest }
-            SortMode.PUSH_UP -> playersList.sortByDescending { it.pushUpBest }
-            SortMode.RUN -> playersList.sortByDescending { it.runBest }
-            SortMode.SQUAT -> playersList.sortByDescending { it.squatBest }
+            Workout.NONE -> return
+            Workout.BENCH_PRESS -> playersList.sortByDescending { it.bpBest }
+            Workout.CURL -> playersList.sortByDescending { it.curlBest }
+            Workout.PUSH_UP -> playersList.sortByDescending { it.pushUpBest }
+            Workout.RUN -> playersList.sortByDescending { it.runBest }
+            Workout.SQUAT -> playersList.sortByDescending { it.squatBest }
         }
         leaderboardAdapter.notifyDataSetChanged()
     }
@@ -107,9 +107,5 @@ class Leaderboard {
             }
 
         })
-    }
-
-    enum class SortMode {
-        NONE, BENCH_PRESS, CURL, PUSH_UP, RUN, SQUAT
     }
 }

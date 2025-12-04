@@ -29,13 +29,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnLogin: MaterialButton
     private lateinit var btnSignUp: MaterialButton
     private lateinit var progressBar: ProgressBar
-//    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-//        database = FirebaseDatabase.getInstance().reference     // Initialize Firebase
         initializeViews()       // Initialize UI components
     }
 
@@ -241,7 +238,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goToMainMenu() {
-        val intent = Intent(this, LeaderboardActivity::class.java)
+        val intent = Intent(this, MainMenuActivity::class.java)
         intent.putExtra("USERNAME", etUsername.text.toString().trim())
         startActivity(intent)
         finish()

@@ -35,29 +35,18 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
         holder.tvUsername.text = player.username
 
         // Set metric value based on current sort mode
+        val statToString: (Int?, Boolean) -> String = { stat, isRun ->
+            if (isRun) "$stat mile${if (stat == 1) "" else "s"}"
+            else "$stat rep${if (stat == 1) "" else "s"}"
+        }
         holder.tvMetricValue.text =
             when (leaderboard.getCurrentSortMode()) {
-                Leaderboard.SortMode.BENCH_PRESS -> {
-                    "${player.bpBest} rep${if (player.bpBest == 1) "" else "s"}"
-                }
-
-                Leaderboard.SortMode.CURL -> {
-                    "${player.curlBest} rep${if (player.curlBest == 1) "" else "s"}"
-                }
-
-                Leaderboard.SortMode.NONE -> ""
-
-                Leaderboard.SortMode.PUSH_UP -> {
-                    "${player.pushUpBest} rep${if (player.pushUpBest == 1) "" else "s"}"
-                }
-
-                Leaderboard.SortMode.RUN -> {
-                    "${player.runBest} mile${if (player.runBest == 1) "" else "s"}"
-                }
-
-                Leaderboard.SortMode.SQUAT -> {
-                    "${player.squatBest} rep${if (player.squatBest == 1) "" else "s"}"
-                }
+                Workout.BENCH_PRESS -> statToString(player.bpBest, false)
+                Workout.CURL -> statToString(player.curlBest, false)
+                Workout.NONE -> ""
+                Workout.PUSH_UP -> statToString(player.pushUpBest, false)
+                Workout.RUN -> statToString(player.runBest, true)
+                Workout.SQUAT -> statToString(player.squatBest, false)
             }
 
         // Highlight current user
@@ -77,8 +66,7 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
         )
 
         if (isCurrUser) holder.tvUsername.text =
-                holder.view.context.getString(R.string.tvUsername_text_you, player.username)
-
+            holder.view.context.getString(R.string.tvUsername_text_you, player.username)
 
         // Special styling for top 3 ranks
         when (position + 1) {

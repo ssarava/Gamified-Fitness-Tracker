@@ -79,19 +79,19 @@ class LeaderboardActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        btnSortBenchPress.setOnClickListener(SortButtonListener(Leaderboard.SortMode.BENCH_PRESS))
-        btnSortCurl.setOnClickListener(SortButtonListener(Leaderboard.SortMode.CURL))
-        btnSortPushUp.setOnClickListener(SortButtonListener(Leaderboard.SortMode.PUSH_UP))
-        btnSortRun.setOnClickListener(SortButtonListener(Leaderboard.SortMode.RUN))
-        btnSortSquat.setOnClickListener(SortButtonListener(Leaderboard.SortMode.SQUAT))
+        btnSortBenchPress.setOnClickListener(SortButtonListener(Workout.BENCH_PRESS))
+        btnSortCurl.setOnClickListener(SortButtonListener(Workout.CURL))
+        btnSortPushUp.setOnClickListener(SortButtonListener(Workout.PUSH_UP))
+        btnSortRun.setOnClickListener(SortButtonListener(Workout.RUN))
+        btnSortSquat.setOnClickListener(SortButtonListener(Workout.SQUAT))
         btnBack.setOnClickListener { finish() }
     }
 
     inner class SortButtonListener : View.OnClickListener {
 
-        private var sortMode: Leaderboard.SortMode
+        private var sortMode: Workout
 
-        constructor(sortModeIn: Leaderboard.SortMode) {
+        constructor(sortModeIn: Workout) {
             sortMode = sortModeIn
         }
 
@@ -102,12 +102,12 @@ class LeaderboardActivity : AppCompatActivity() {
             updateSortButtonColors()
             tvHeaderMetric.text =
                 when (sortMode) {
-                    Leaderboard.SortMode.BENCH_PRESS -> getString(R.string.bp_enum)
-                    Leaderboard.SortMode.CURL -> getString(R.string.curl_enum)
-                    Leaderboard.SortMode.NONE -> ""
-                    Leaderboard.SortMode.PUSH_UP -> getString(R.string.pushUp_enum)
-                    Leaderboard.SortMode.RUN -> getString(R.string.run_enum)
-                    Leaderboard.SortMode.SQUAT -> getString(R.string.squat_enum)
+                    Workout.BENCH_PRESS -> getString(R.string.bp_enum)
+                    Workout.CURL -> getString(R.string.curl_enum)
+                    Workout.NONE -> ""
+                    Workout.PUSH_UP -> getString(R.string.pushUp_enum)
+                    Workout.RUN -> getString(R.string.run_enum)
+                    Workout.SQUAT -> getString(R.string.squat_enum)
                 }
         }
     }
@@ -122,7 +122,7 @@ class LeaderboardActivity : AppCompatActivity() {
      */
     private fun updateSortButtonColors() {
         when (leaderboard.getCurrentSortMode()) {
-            Leaderboard.SortMode.BENCH_PRESS -> {
+            Workout.BENCH_PRESS -> {
                 applyToButtons(btnSortBenchPress, R.color.primary_color, R.color.white)
                 applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
                 applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
@@ -130,7 +130,7 @@ class LeaderboardActivity : AppCompatActivity() {
                 applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
             }
 
-            Leaderboard.SortMode.CURL -> {
+            Workout.CURL -> {
                 applyToButtons(
                     btnSortBenchPress,
                     android.R.color.transparent,
@@ -142,7 +142,7 @@ class LeaderboardActivity : AppCompatActivity() {
                 applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
             }
 
-            Leaderboard.SortMode.PUSH_UP -> {
+            Workout.PUSH_UP -> {
                 applyToButtons(
                     btnSortBenchPress,
                     android.R.color.transparent,
@@ -154,7 +154,7 @@ class LeaderboardActivity : AppCompatActivity() {
                 applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
             }
 
-            Leaderboard.SortMode.NONE -> {
+            Workout.NONE -> {
                 applyToButtons(
                     btnSortBenchPress,
                     android.R.color.transparent,
@@ -166,7 +166,7 @@ class LeaderboardActivity : AppCompatActivity() {
                 applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
             }
 
-            Leaderboard.SortMode.RUN -> {
+            Workout.RUN -> {
                 applyToButtons(
                     btnSortBenchPress,
                     android.R.color.transparent,
@@ -178,7 +178,7 @@ class LeaderboardActivity : AppCompatActivity() {
                 applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
             }
 
-            Leaderboard.SortMode.SQUAT -> {
+            Workout.SQUAT -> {
                 applyToButtons(
                     btnSortBenchPress,
                     android.R.color.transparent,
