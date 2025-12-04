@@ -26,12 +26,13 @@
 
     <!-- Failed Login Activity Strings -->
     <string name="login_failed">Login Failed</string>
-    <string name="user_exists_wrong_password">User with username exists but an incorrect password was entered</string>
+    <string name="user_exists_wrong_password">An incorrect password was entered for the following username:</string>
     <string name="error_icon">Error Icon</string>
     <string name="back_to_login">Back to Login</string>
     <string name="suggestions">Suggestions:</string>
     <string name="check_password">Double-check your password</string>
     <string name="check_caps_lock">Make sure Caps Lock is off</string>
+<!--    "User with username"-->
 
     <!-- Exercise Logger Activity Strings -->
     <string name="filler_description">filler_description</string>
@@ -40,4 +41,7 @@
     <string name="increase_reps">Increase Reps</string>
     <string name="high_score">High Score</string>
     <string name="current_score">Current Score</string>
+
+    <!--    LeaderboardAdapter Strings-->
+    <string name="tvUsername_text_you">%1$s (You)</string>
 </resources>

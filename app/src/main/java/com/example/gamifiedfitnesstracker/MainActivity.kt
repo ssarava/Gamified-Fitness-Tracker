@@ -1,6 +1,8 @@
 package com.example.gamifiedfitnesstracker
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -14,8 +16,8 @@ import com.google.firebase.database.*
 import androidx.core.content.edit
 
 /**
- * LoginActivity handles user authentication with username and password.
- * User credentials are stored in Firebase Realtime Database.
+ * Handles user authentication with username and password.
+ * User credentials are stored in Firebase.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -44,11 +46,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Initialize all UI components
+     * Initialize all UI components, and auto-populate username and password if possible
      */
     private fun initializeViews() {
+        val sp: SharedPreferences =
+            getSharedPreferences("${this.packageName}_preferences", MODE_PRIVATE)
+
         etUsername = findViewById(R.id.etUsername)
+        val storedUsername = sp.getString(PREFERENCE_USERNAME, "")
+        etUsername.setText(storedUsername)
+
         etPassword = findViewById(R.id.etPassword)
+        val storedPassword = sp.getString(PREFERENCE_PASSWORD, "")
+        etPassword.setText(storedPassword)
+
         usernameLayout = findViewById(R.id.usernameLayout)
         passwordLayout = findViewById(R.id.passwordLayout)
         btnLogin = findViewById(R.id.btnLogin)
@@ -62,21 +73,20 @@ class MainActivity : AppCompatActivity() {
      * Setup click listeners for buttons
      */
     private fun setupClickListeners() {
-        btnLogin.setOnClickListener {
-            val username = etUsername.text.toString().trim()
-            val password = etPassword.text.toString().trim()
 
-            if (validateInput(username, password)) {
-                loginUser(username, password)
+        btnLogin.setOnClickListener {
+            if (validCredentials()) {
+//                val username = etUsername.text.toString().trim()
+//                val password = etPassword.text.toString().trim()
+                loginUser()
             }
         }
 
         btnSignUp.setOnClickListener {
-            val username = etUsername.text.toString().trim()
-            val password = etPassword.text.toString().trim()
-
-            if (validateInput(username, password)) {
-                signUpUser(username, password)
+            if (validCredentials()) {
+//                val username = etUsername.text.toString().trim()
+//                val password = etPassword.text.toString().trim()
+                signUpUser()
             }
         }
     }
@@ -84,8 +94,10 @@ class MainActivity : AppCompatActivity() {
     /**
      * Validate user input
      */
-    private fun validateInput(username: String, password: String): Boolean {
+    private fun validCredentials(): Boolean {
         var isValid = true
+        val username = etUsername.text.toString().trim()
+        val password = etPassword.text.toString().trim()
 
         // Clear previous errors
         usernameLayout.error = null
@@ -118,7 +130,10 @@ class MainActivity : AppCompatActivity() {
     /**
      * Login existing user
      */
-    private fun loginUser(username: String, password: String) {
+    private fun loginUser() {
+        val username = etUsername.text.toString().trim()
+        val password = etPassword.text.toString().trim()
+
         showLoading(true)
 
         // Reference to users in Firebase
@@ -130,8 +145,8 @@ class MainActivity : AppCompatActivity() {
                     // User exists, check password
                     val storedPassword = snapshot.child("password").getValue(String::class.java)
 
+                    // Password correct - successful login
                     if (storedPassword == password) {
-                        // Password correct - successful login
                         showLoading(false)
                         Toast.makeText(
                             this@MainActivity,
@@ -140,12 +155,14 @@ class MainActivity : AppCompatActivity() {
                         ).show()
 
                         // Save login state
-                        saveLoginState(username)
+                        saveLoginState(this@MainActivity, username, password)
 
-                        // Navigate to main activity
-                        navigateToSomeActivity(username)
-                    } else {
-                        // Password incorrect - navigate to FailedLoginActivity
+                        // Navigate to the next activity
+                        navigateToSomeActivity()
+                    }
+
+                    // Password incorrect - navigate to FailedLoginActivity
+                    else {
                         showLoading(false)
                         navigateToFailedLogin(username)
                     }
@@ -175,7 +192,9 @@ class MainActivity : AppCompatActivity() {
     /**
      * Sign up new user
      */
-    private fun signUpUser(username: String, password: String) {
+    private fun signUpUser() {
+        val username = etUsername.text.toString().trim()
+        val password = etPassword.text.toString().trim()
         showLoading(true)
 
         // Check if username already exists
@@ -189,7 +208,7 @@ class MainActivity : AppCompatActivity() {
                     usernameLayout.error = "Username already taken"
                     Toast.makeText(
                         this@MainActivity,
-                        "Username already exists. Please choose a different username or login.",
+                        "Username already exists. Please log in or choose a different username",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
@@ -232,10 +251,10 @@ class MainActivity : AppCompatActivity() {
                 ).show()
 
                 // Save login state
-                saveLoginState(username)
+                saveLoginState(this@MainActivity, username, password)
 
-                // Navigate to main activity
-                navigateToSomeActivity(username)
+                // Navigate to the next activity
+                navigateToSomeActivity()
             }
             .addOnFailureListener { e ->
                 showLoading(false)
@@ -250,12 +269,13 @@ class MainActivity : AppCompatActivity() {
     /**
      * Save login state to SharedPreferences
      */
-    private fun saveLoginState(username: String) {
-        val sharedPreferences = getSharedPreferences("FitnessAppPrefs", MODE_PRIVATE)
-        sharedPreferences.edit {
-            putBoolean("isLoggedIn", true)
-            putString("username", username)
-            putLong("loginTime", System.currentTimeMillis())
+    private fun saveLoginState(context: Context, username: String, password: String) {
+        val sp: SharedPreferences =
+            context.getSharedPreferences("${context.packageName}_preferences", MODE_PRIVATE)
+        sp.edit(commit = true) {
+            putString(PREFERENCE_USERNAME, username)
+            putString(PREFERENCE_PASSWORD, password)
+            putBoolean("isLoggedIn", true)      // not used in anything else so far
         }
     }
 
@@ -269,21 +289,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Navigate to main activity after successful login
+     * Navigate to the next activity after successful login
      */
-    private fun navigateToSomeActivity(username: String) {
+    private fun navigateToSomeActivity() {
         // TODO: Replace with your actual main activity
-        // For now, we'll show a placeholder
 
-//        val intent = Intent(this, LeaderboardActivity::class.java)
-//        intent.putExtra("USERNAME", username)
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        startActivity(intent)
-//        finish()
-
-        val intent = Intent(this, ExerciseLoggerActivity::class.java)
-//        intent.putExtra("USERNAME", username)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val intent = Intent(
+            this,
+            LeaderboardActivity::class.java
+        )      // need to change 'LeaderboardActivity' to something else
         startActivity(intent)
         finish()
     }
@@ -297,5 +311,10 @@ class MainActivity : AppCompatActivity() {
         btnSignUp.isEnabled = !show
         etUsername.isEnabled = !show
         etPassword.isEnabled = !show
+    }
+
+    companion object {
+        const val PREFERENCE_USERNAME = "recentUsername"
+        const val PREFERENCE_PASSWORD = "recentPassword"
     }
 }
