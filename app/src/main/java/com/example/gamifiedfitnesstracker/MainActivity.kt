@@ -15,6 +15,7 @@ import androidx.core.content.edit
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Random
 
 /**
  * Handles user authentication with username and password.
@@ -114,14 +115,17 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        saveLoginState(username, password)      // Save login state
-                        goToMainMenu()              // Navigate to the next activity
+                        // Save login state
+                        saveLoginState(username, password)
+
+                        // Navigate to the next activity
+                        goToNextScreen(LeaderboardActivity::class.java)
                     }
 
                     // Password incorrect - navigate to FailedLoginActivity
                     else {
                         showLoadingIndicator(false)
-                        goToFailedLogin()
+                        goToNextScreen(FailedLoginActivity::class.java)
                     }
                 } else {
                     // User doesn't exist
@@ -183,19 +187,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNewUser(username: String, password: String) {
-        val defaultPersonalBests = hashMapOf(
-            "squat" to 0,
-            "pushUp" to 0,
-            "running" to 0,
-            "benchPress" to 0,
-            "curl" to 0
-        )
+        val r = Random()
         val currentDate = SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.US).format(Date())
         val userData = hashMapOf(
             "username" to username,
             "password" to password,
             "createdAt" to currentDate,
-            "personalBests" to defaultPersonalBests
+            "personalBests" to hashMapOf(
+                "squat" to r.nextInt(101),
+                "pushUp" to r.nextInt(101),
+                "running" to r.nextInt(101),
+                "benchPress" to r.nextInt(101),
+                "curl" to r.nextInt(101),
+            )
         )
 
         DATABASE.child("users").child(username).setValue(userData)
@@ -211,7 +215,7 @@ class MainActivity : AppCompatActivity() {
                 saveLoginState(username, password)
 
                 // Navigate to the next activity
-                goToMainMenu()
+                goToNextScreen(LeaderboardActivity::class.java)
             }
             .addOnFailureListener { e ->
                 showLoadingIndicator(false)
@@ -231,17 +235,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToFailedLogin() {
-        val intent = Intent(this, FailedLoginActivity::class.java)
+    private fun goToNextScreen(activityClass: Class<*>) {
+        val intent = Intent(this, activityClass)
         intent.putExtra("USERNAME", etUsername.text.toString().trim())
         startActivity(intent)
-    }
-
-    private fun goToMainMenu() {
-        val intent = Intent(this, MainMenuActivity::class.java)
-        intent.putExtra("USERNAME", etUsername.text.toString().trim())
-        startActivity(intent)
-        finish()
+        if (activityClass == MainMenuActivity::class.java) {
+            finish()
+        }
     }
 
     private fun showLoadingIndicator(show: Boolean) {

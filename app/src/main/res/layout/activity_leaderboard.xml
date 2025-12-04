@@ -38,7 +38,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:contentDescription="@string/trophy_icon"
-            android:src="@drawable/ic_trophy"
+            android:src="@drawable/ic_gold_trophy"
             app:tint="@color/gold" />
 
         <!-- Title -->
@@ -95,8 +95,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/bp_enum"
-            android:textSize="10sp"
+            android:textSize="13sp"
             app:cornerRadius="20dp"
             app:strokeColor="@color/primary_color"
             app:strokeWidth="2dp" />
@@ -107,8 +109,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/curl_enum"
-            android:textSize="12sp"
+            android:textSize="13sp"
             app:cornerRadius="20dp"
             app:strokeColor="@color/primary_color"
             app:strokeWidth="2dp" />
@@ -119,8 +123,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/pushUp_enum"
-            android:textSize="10sp"
+            android:textSize="11sp"
             app:cornerRadius="20dp"
             app:strokeColor="@color/primary_color"
             app:strokeWidth="2dp" />
@@ -131,6 +137,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/run_enum"
             android:textSize="13sp"
             app:cornerRadius="20dp"
@@ -143,12 +151,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/squat_enum"
-            android:textSize="10sp"
+            android:textSize="13sp"
             app:cornerRadius="20dp"
             app:strokeColor="@color/primary_color"
             app:strokeWidth="2dp" />
-
 
 
     </LinearLayout>

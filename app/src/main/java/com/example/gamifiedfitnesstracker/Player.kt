@@ -10,10 +10,8 @@ data class Player(
 ) {
     override fun toString(): String = "name: $username\tbpBest: $bpBest\tcurlBest: " +
             "$curlBest\tpushUpBest: $pushUpBest\trunBest: $runBest\tsquatBest: $squatBest\t"
-
 }
 
-// for now: squats, push-ups, runs
 enum class Workout(val displayName: String? = null) {
     BENCH_PRESS("Bench Press"),
     CURL("Curl"),

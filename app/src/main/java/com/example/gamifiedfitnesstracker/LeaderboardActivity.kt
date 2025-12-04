@@ -49,10 +49,45 @@ class LeaderboardActivity : AppCompatActivity() {
 
         // Load leaderboard data
         showLoading(true)
-        leaderboard.loadLeaderboardData(CustomValueEventListener())
+        leaderboard.loadLeaderboardData(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val playersList = leaderboard.getPlayers()
+                playersList.clear()
+
+                if (snapshot.exists()) {
+                    for (playerSnapshot in snapshot.children) {
+                        val player = playerSnapshot.getValue(Player::class.java)
+                        player?.let {
+                            it.username = playerSnapshot.key ?: ""
+                            if (it.runBest != null) playersList.add(it)
+                        }
+                    }
+
+                    if (playersList.isNotEmpty()) {
+                        leaderboard.sortAndUpdateLeaderboard()
+                        scrollToCurrentUser()
+                    }
+                    showEmptyState(false)
+                } else {
+                    showEmptyState(true)
+                }
+
+                showLoading(false)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                showLoading(false)
+                showEmptyState(true)
+
+                // Handle error (you can show a toast or snack bar)
+                Toast.makeText(
+                    this@LeaderboardActivity,
+                    "Error loading leaderboard: ${error.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
         leaderboard.sortAndUpdateLeaderboard()
-
-
     }
 
     private fun initializeViews() {
@@ -88,7 +123,6 @@ class LeaderboardActivity : AppCompatActivity() {
     }
 
     inner class SortButtonListener : View.OnClickListener {
-
         private var sortMode: Workout
 
         constructor(sortModeIn: Workout) {
@@ -112,122 +146,35 @@ class LeaderboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun applyToButtons(target: Button, backgroundColor: Int, textColor: Int) {
-        target.setBackgroundColor(ContextCompat.getColor(this, backgroundColor))
-        target.setTextColor(ContextCompat.getColor(this, textColor))
+    private fun highlightButton(button: Button, shouldHighlight: Boolean = true) {
+        if (shouldHighlight) {
+            button.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_color))
+            button.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent))
+            button.setTextColor(ContextCompat.getColor(this, R.color.primary_color))
+        }
     }
 
     /**
      * Update visual state of sorting buttons
      */
     private fun updateSortButtonColors() {
+        // reset all buttons
+        highlightButton(btnSortBenchPress, false)
+        highlightButton(btnSortCurl, false)
+        highlightButton(btnSortPushUp, false)
+        highlightButton(btnSortRun, false)
+        highlightButton(btnSortSquat, false)
+
+        // update only the selected button
         when (leaderboard.getCurrentSortMode()) {
-            Workout.BENCH_PRESS -> {
-                applyToButtons(btnSortBenchPress, R.color.primary_color, R.color.white)
-                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
-            }
-
-            Workout.CURL -> {
-                applyToButtons(
-                    btnSortBenchPress,
-                    android.R.color.transparent,
-                    R.color.primary_color
-                )
-                applyToButtons(btnSortCurl, R.color.primary_color, R.color.white)
-                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
-            }
-
-            Workout.PUSH_UP -> {
-                applyToButtons(
-                    btnSortBenchPress,
-                    android.R.color.transparent,
-                    R.color.primary_color
-                )
-                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortPushUp, R.color.primary_color, R.color.white)
-                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
-            }
-
-            Workout.NONE -> {
-                applyToButtons(
-                    btnSortBenchPress,
-                    android.R.color.transparent,
-                    R.color.primary_color
-                )
-                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
-            }
-
-            Workout.RUN -> {
-                applyToButtons(
-                    btnSortBenchPress,
-                    android.R.color.transparent,
-                    R.color.primary_color
-                )
-                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortRun, R.color.primary_color, R.color.white)
-                applyToButtons(btnSortSquat, android.R.color.transparent, R.color.primary_color)
-            }
-
-            Workout.SQUAT -> {
-                applyToButtons(
-                    btnSortBenchPress,
-                    android.R.color.transparent,
-                    R.color.primary_color
-                )
-                applyToButtons(btnSortCurl, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortPushUp, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortRun, android.R.color.transparent, R.color.primary_color)
-                applyToButtons(btnSortSquat, R.color.primary_color, R.color.white)
-            }
-        }
-    }
-
-    inner class CustomValueEventListener : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val playersList = leaderboard.getPlayers()
-            playersList.clear()
-
-            if (snapshot.exists()) {
-                for (playerSnapshot in snapshot.children) {
-                    val player = playerSnapshot.getValue(Player::class.java)
-                    player?.let {
-                        it.username = playerSnapshot.key ?: ""
-                        if (it.runBest != null) playersList.add(it)
-                    }
-                }
-
-                if (playersList.isNotEmpty()) {
-                    leaderboard.sortAndUpdateLeaderboard()
-                    scrollToCurrentUser()
-                }
-                showEmptyState(false)
-            } else {
-                showEmptyState(true)
-            }
-
-            showLoading(false)
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            showLoading(false)
-            showEmptyState(true)
-
-            // Handle error (you can show a toast or snack bar)
-            Toast.makeText(
-                this@LeaderboardActivity,
-                "Error loading leaderboard: ${error.message}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Workout.BENCH_PRESS -> highlightButton(btnSortBenchPress)
+            Workout.CURL -> highlightButton(btnSortCurl)
+            Workout.PUSH_UP -> highlightButton(btnSortPushUp)
+            Workout.NONE -> return
+            Workout.RUN -> highlightButton(btnSortRun)
+            Workout.SQUAT -> highlightButton(btnSortSquat)
         }
     }
 

@@ -11,8 +11,6 @@ class Leaderboard {
     private var playersList = ArrayList<Player>()
     private var currentSortMode = Workout.NONE
     private var currentUsername: String
-
-    // Initialize Firebase
     private var leaderboardAdapter: LeaderboardAdapter
 
     constructor(usernameIn: String) {
@@ -38,9 +36,9 @@ class Leaderboard {
      */
     fun sortAndUpdateLeaderboard() {
         when (currentSortMode) {
-            Workout.NONE -> return
             Workout.BENCH_PRESS -> playersList.sortByDescending { it.bpBest }
             Workout.CURL -> playersList.sortByDescending { it.curlBest }
+            Workout.NONE -> return
             Workout.PUSH_UP -> playersList.sortByDescending { it.pushUpBest }
             Workout.RUN -> playersList.sortByDescending { it.runBest }
             Workout.SQUAT -> playersList.sortByDescending { it.squatBest }
@@ -94,7 +92,7 @@ class Leaderboard {
                             }
 
                             override fun onCancelled(error: DatabaseError) {
-                                println("Database Error ${error.code}: ${error.message}")   // error debug message
+                                println("Database Error ${error.code}: ${error.message}")
                             }
                         })
                     }
@@ -103,9 +101,8 @@ class Leaderboard {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                println("Database Error ${error.code}: ${error.message}")
             }
-
         })
     }
 }
