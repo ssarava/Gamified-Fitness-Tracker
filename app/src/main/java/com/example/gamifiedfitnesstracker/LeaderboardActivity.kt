@@ -1,7 +1,6 @@
 package com.example.gamifiedfitnesstracker
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -39,8 +38,8 @@ class LeaderboardActivity : AppCompatActivity() {
         val username = intent.getStringExtra("USERNAME") ?: ""
         leaderboard = Leaderboard(username)
 
-//        clearTestData()
-//        checkAndPopulateIfEmpty()
+//        clearTestData("insert_username")
+//        populateTestData()
 
         // Initialize UI components
         initializeViews()
@@ -94,7 +93,6 @@ class LeaderboardActivity : AppCompatActivity() {
         rvLeaderboard = findViewById(R.id.rvLeaderboard)
         progressBar = findViewById(R.id.progressBar)
         emptyStateLayout = findViewById(R.id.emptyStateLayout)
-
         btnSortBenchPress = findViewById(R.id.btnSortBenchPress)
         btnSortCurl = findViewById(R.id.btnSortCurl)
         btnSortPushUp = findViewById(R.id.btnSortPushUp)
@@ -147,13 +145,10 @@ class LeaderboardActivity : AppCompatActivity() {
     }
 
     private fun highlightButton(button: Button, shouldHighlight: Boolean = true) {
-        if (shouldHighlight) {
-            button.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_color))
-            button.setTextColor(ContextCompat.getColor(this, R.color.white))
-        } else {
-            button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent))
-            button.setTextColor(ContextCompat.getColor(this, R.color.primary_color))
-        }
+        val bgColor = if (shouldHighlight) R.color.primary_color else android.R.color.transparent
+        val textColor = if (shouldHighlight) R.color.white else R.color.primary_color
+        button.setBackgroundColor(ContextCompat.getColor(this, bgColor))
+        button.setTextColor(ContextCompat.getColor(this, textColor))
     }
 
     /**
@@ -185,9 +180,7 @@ class LeaderboardActivity : AppCompatActivity() {
         val currentUsername = intent.getStringExtra("USERNAME")!!
         val currentUserIndex =
             leaderboard.getPlayers().indexOfFirst { it.username == currentUsername }
-        if (currentUserIndex != -1) {
-            rvLeaderboard.scrollToPosition(currentUserIndex)
-        }
+        if (currentUserIndex != -1) rvLeaderboard.scrollToPosition(currentUserIndex)
     }
 
     /**
@@ -206,114 +199,30 @@ class LeaderboardActivity : AppCompatActivity() {
         rvLeaderboard.visibility = if (show) View.GONE else View.VISIBLE
     }
 
+    /**
+     * If no argument is specified, clears all test data from Firebase (useful for cleanup);
+     * otherwise, only removes the specified users, if they exists
+     */
+    private fun clearTestData(vararg usernames: String) {
+        for (username in usernames) {
+            DATABASE.child("users").child(username).removeValue()
+        }
+    }
+
+    private fun populateTestData(numOfUsers: Int = 3) {
+        for (i in 1 .. numOfUsers) {
+            val username = "random_user_$i"
+            val pw = "random_password_$i"
+            val newUser = MainActivity.createNewUser(username, pw, true)
+
+            DATABASE.child("users").child(username).setValue(newUser)
+                .addOnSuccessListener { println("Successfully added user $username") }
+                .addOnFailureListener { e -> println("Failed to create account: ${e.message}") }
+        }
+
+    }
+
     companion object {
         lateinit var leaderboard: Leaderboard
-    }
-
-    /**
-     * Populate Firebase Database with sample test data for leaderboard testing.
-     * Call this method from onCreate() to add test users.
-     *
-     * IMPORTANT: Remove or comment out this function before production release!
-     */
-//    private fun populateTestData() {
-//        val workoutId = intent.getStringExtra("WORKOUT_ID") ?: "test_workout_1"
-//        val workoutRef =
-//            DATABASE.child("workouts").child(workoutId).child("players")
-//
-//        // Create a list of test players with varied data
-//        val testPlayers = ArrayList<Player>()
-//        for (i in 0..4) {
-//            testPlayers.add(
-//                Player(
-//                    "test_user_$i",
-//                    "SpeedyRunner$i",
-//                    (i + 1) * 100 + i * 10,
-//                    (i + 1) * 60000,
-//                    hashMapOf(
-////                        Workout.SQUAT to (i + 1) * 20 + i * 4,
-////                        Workout.PUSH_UP to (i + 1) * 15 + i * 4,
-//                        Workout.RUN to i + 7
-//                    )
-//                )
-//            )
-//        }
-//
-//        // Upload each test player to Firebase
-//        testPlayers.forEach { player ->
-//            val playerData = hashMapOf(
-//                "username" to player.username,
-//                "caloriesBurned" to player.caloriesBurned,
-//                "workoutDuration" to player.workoutDuration,
-//                "workoutRecords" to hashMapOf(
-////                    "squatRecord" to player.workoutRecords.get(Workout.SQUAT),
-////                    "push_upRecord" to player.workoutRecords.get(Workout.PUSH_UP),
-//                    "runRecord" to player.workoutRecords.get(Workout.RUN)
-//                )
-//            )
-//
-//            workoutRef.child(player.userId!!).setValue(playerData)
-//                .addOnSuccessListener {
-//                    Log.d("LeaderboardTest", "Added test user: ${player.username}")
-//                }
-//                .addOnFailureListener { e ->
-//                    Log.e("LeaderboardTest", "Error adding test user: ${e.message}")
-//                }
-//        }
-//
-//        Toast.makeText(
-//            this,
-//            "Test data populated! Refresh to see leaderboard.",
-//            Toast.LENGTH_SHORT
-//        ).show()
-//    }
-
-    /**
-     * Clear all test data from Firebase (useful for cleanup)
-     */
-    private fun clearTestData() {
-        val workoutId = intent.getStringExtra("WORKOUT_ID") ?: "test_workout_1"
-        val workoutRef =
-            DATABASE.child("workouts").child(workoutId).child("players")
-
-        workoutRef.removeValue()
-            .addOnSuccessListener {
-                Toast.makeText(
-                    this,
-                    "Test data cleared!",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.d("LeaderboardTest", "Test data cleared successfully")
-            }
-            .addOnFailureListener { e ->
-                Log.e("LeaderboardTest", "Error clearing test data: ${e.message}")
-            }
-    }
-
-    /**
-     * Check if the leaderboard is empty and populate with test data if needed
-     */
-    private fun checkAndPopulateIfEmpty() {
-        val workoutId = intent.getStringExtra("WORKOUT_ID") ?: "test_workout_1"
-        val workoutRef =
-            DATABASE.child("workouts").child(workoutId).child("players")
-
-        workoutRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (!snapshot.exists() || snapshot.childrenCount == 0L) {
-                    Log.d("LeaderboardTest", "Database empty, populating test data...")
-//                    populateTestData()
-                } else {
-                    Log.d(
-                        "LeaderboardTest",
-                        "Database has data, skipping test population"
-                    )
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("LeaderboardTest", "Error checking database: ${error.message}")
-            }
-        })
     }
 }

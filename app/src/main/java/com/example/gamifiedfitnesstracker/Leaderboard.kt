@@ -1,5 +1,6 @@
 package com.example.gamifiedfitnesstracker
 
+import android.annotation.SuppressLint
 import com.example.gamifiedfitnesstracker.MainActivity.Companion.DATABASE
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -34,6 +35,7 @@ class Leaderboard {
     /**
      * Sort players based on current sort mode and update the adapter
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun sortAndUpdateLeaderboard() {
         when (currentSortMode) {
             Workout.BENCH_PRESS -> playersList.sortByDescending { it.bpBest }
@@ -60,11 +62,10 @@ class Leaderboard {
                     val generic = object : GenericTypeIndicator<HashMap<String, Any>>() {}
                     val users: HashMap<String, Any> = snapshot.getValue(generic)!!
 
-                    for (user in users.keys.toList()) {
-                        val personalBestsRef = usersRef.child(user).child("personalBests")
+                    for (user in users.keys) {
+                        val pbRef = usersRef.child(user).child("personalBests")
 
-                        personalBestsRef.addListenerForSingleValueEvent(object :
-                            ValueEventListener {
+                        pbRef.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 if (snapshot.exists()) {
                                     val cls = Int::class.java
@@ -86,8 +87,6 @@ class Leaderboard {
                                         squat
                                     )
                                     playersList.add(player)
-                                    // Update UI
-//                    updatePersonalBestsUI(squat, pushUp, run, bp, curl)
                                 }
                             }
 

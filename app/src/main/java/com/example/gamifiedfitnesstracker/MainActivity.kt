@@ -109,11 +109,7 @@ class MainActivity : AppCompatActivity() {
                     // Password correct - successful login
                     if (storedPassword == password) {
                         showLoadingIndicator(false)
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Login successful! Welcome back, $username",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        initializeToast("Login successful! Welcome back, $username")
 
                         // Save login state
                         saveLoginState(username, password)
@@ -131,21 +127,13 @@ class MainActivity : AppCompatActivity() {
                     // User doesn't exist
                     showLoadingIndicator(false)
                     usernameLayout.error = "Username not found. Please sign up first."
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Username not found. Please sign up first.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    initializeToast("Username not found. Please sign up first.")
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 showLoadingIndicator(false)
-                Toast.makeText(
-                    this@MainActivity,
-                    "Error: ${error.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                initializeToast("Error: ${error.message}")
             }
         })
     }
@@ -164,52 +152,28 @@ class MainActivity : AppCompatActivity() {
                     // Username already taken
                     showLoadingIndicator(false)
                     usernameLayout.error = "Username already taken"
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Username already exists. Please log in or choose a different username",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    initializeToast("Username already exists. Please log in or choose a different username")
+
                 } else {
                     // Username available, create new user
-                    createNewUser(username, password)
+                    putUserInDatabase(username, password, true)
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 showLoadingIndicator(false)
-                Toast.makeText(
-                    this@MainActivity,
-                    "Error: ${error.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                initializeToast("Error: ${error.message}")
             }
         })
     }
 
-    private fun createNewUser(username: String, password: String) {
-        val r = Random()
-        val currentDate = SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.US).format(Date())
-        val userData = hashMapOf(
-            "username" to username,
-            "password" to password,
-            "createdAt" to currentDate,
-            "personalBests" to hashMapOf(
-                "squat" to r.nextInt(101),
-                "pushUp" to r.nextInt(101),
-                "running" to r.nextInt(101),
-                "benchPress" to r.nextInt(101),
-                "curl" to r.nextInt(101),
-            )
-        )
+    fun putUserInDatabase(username: String, password: String, testUser: Boolean = false) {
+        val newUser = createNewUser(username, password, testUser)
 
-        DATABASE.child("users").child(username).setValue(userData)
+        DATABASE.child("users").child(username).setValue(newUser)
             .addOnSuccessListener {
                 showLoadingIndicator(false)
-                Toast.makeText(
-                    this,
-                    "Account created successfully! Welcome, $username",
-                    Toast.LENGTH_SHORT
-                ).show()
+                initializeToast("Account created successfully! Welcome, $username")
 
                 // Save login state
                 saveLoginState(username, password)
@@ -219,13 +183,13 @@ class MainActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 showLoadingIndicator(false)
-                Toast.makeText(
-                    this,
-                    "Failed to create account: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                initializeToast("Failed to create account: ${e.message}")
             }
     }
+
+    private fun initializeToast(text: String) =
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+
 
     private fun saveLoginState(username: String, password: String) {
         val sp = getSharedPreferences("${packageName}_preferences", MODE_PRIVATE)
@@ -256,5 +220,23 @@ class MainActivity : AppCompatActivity() {
         const val PREFERENCE_USERNAME = "recentUsername"
         const val PREFERENCE_PASSWORD = "recentPassword"
         val DATABASE = FirebaseDatabase.getInstance().reference     // singleton database reference
+
+        fun createNewUser(user: String, pw: String, test: Boolean): HashMap<String, *> {
+            val r = Random()
+            val date = SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.US).format(Date())
+            val userData = hashMapOf(
+                "username" to user,
+                "password" to pw,
+                "createdAt" to date,
+                "personalBests" to hashMapOf(
+                    "squat" to if (test) r.nextInt(101) else 0,
+                    "pushUp" to if (test) r.nextInt(101) else 0,
+                    "running" to if (test) r.nextInt(101) else 0,
+                    "benchPress" to if (test) r.nextInt(101) else 0,
+                    "curl" to if (test) r.nextInt(101) else 0
+                )
+            )
+            return userData
+        }
     }
 }
