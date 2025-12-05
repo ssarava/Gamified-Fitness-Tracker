@@ -21,11 +21,6 @@ class ExerciseLogger {
 
         if(this.currentReps > personalBest) {
             this.personalBest = this.currentReps
-
-//            val sharedPreferences: SharedPreferences? = activity.getSharedPreferences(currentWorkout?.displayName, Context.MODE_PRIVATE)
-//            val prefenceEditor = sharedPreferences?.edit()
-//            prefenceEditor?.putInt(currentWorkout?.displayName, personalBest)?.apply()
-//            return true
         }
         return false
     }

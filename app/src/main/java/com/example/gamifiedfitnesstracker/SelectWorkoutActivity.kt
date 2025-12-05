@@ -1,4 +1,4 @@
-package com.example.testerapplication
+package com.example.gamifiedfitnesstracker
 
 import android.content.Intent
 import android.os.Bundle

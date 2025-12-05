@@ -1,18 +1,18 @@
-package com.example.testerapplication
+package com.example.gamifiedfitnesstracker
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.time.Duration.Companion.minutes
+import android.widget.ImageButton
 
 class ExerciseLoggerActivity : AppCompatActivity()  {
 
     companion object {
-        const val SHARED_PREFERENCE_IDENTIFIER = "Most Recent Exercise"
+        const val INCREASE_PREFIX = "Increase"
     }
     private lateinit var game : ExerciseLogger
 
@@ -21,9 +21,9 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         setContentView(R.layout.activity_exercise_logger)
 
         // NEW: Get values passed from SelectWorkoutActivity
-        val workoutName = intent.getStringExtra("workout_name") ?: "Exercise"
+        val workoutName = intent.getStringExtra("workout_name") ?: Workout.DEFAULT.displayName
         val workoutEnumName = intent.getStringExtra("workout_enum")
-        val measurementType = intent.getStringExtra("measurement_type") ?: "reps"
+        var measurementType = intent.getStringExtra("measurement_type") ?: "reps"
 
 
         // Initialize Game
@@ -42,57 +42,53 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         if (workoutEnumName != null && workoutEnumName != "CUSTOM") {
             // It's a built-in exercise
             val workoutEnum = Workout.valueOf(workoutEnumName)
-            game.setCurrentGame(workoutEnum)
+            game.setCurrentWorkout(workoutEnum)
             setBackgroundExercise(workoutEnum)
         } else {
             // Custom workout entry
             exerciseNameView.text = workoutName
+            setBackgroundExercise(Workout.DEFAULT)
         }
 
         // findViewById(R.id.userInput).text == "selected exercise"
         // Need to pass in an enum
-        var selectedExercise: Workout
-        if (true) {
-//            setBackgroundExercise(selectedExercise)
-            setBackgroundExercise(Workout.RUN) // Testing
-        // NEW: Change button label depending on measurement
+        measurementType = measurementType.lowercase().replaceFirstChar { it.titlecase() }
+        increaseRepsButton.text = INCREASE_PREFIX + " " + measurementType
 
-        if (measurementType.lowercase() == "miles") {
-            increaseRepsButton.text = "Increase Miles"
-        } else {
-            increaseRepsButton.text = "Increase Reps"
-        }
+//        if (measurementType.lowercase() == "miles") {
+//            increaseRepsButton.text = "Increase Miles"
+//        } else {
+//            increaseRepsButton.text = "Increase Reps"
+//        }
         increaseRepsButton.setOnClickListener { updateReps() }
+
 //        leaderboardButton.setOnClickListener { setContentView(R.layout.leaderboard) } Use when leaderboard implemented
 
+            // Set TimerView and Progress Bar Update functions.
+            val timer = game.getCountDownTimer()
+            timer.setOnTickListener = { millisLeft ->
+                val secondsLeft = (millisLeft / 1000).toInt()
+                timerText.text = String.format("%02d:%02d", secondsLeft / 60, secondsLeft % 60)
+                progressBar.progress = ((60000 - millisLeft) * 100 / 60000).toInt()
+            }
+            timer.setOnFinishListener = {
+                timerText.text = "Workout Finished"
+                increaseRepsButton.isEnabled = false
+                increaseRepsButton.alpha = 0.5f
+                progressBar.progress = 100
+            }
 
-
-        // Set TimerView and Progress Bar Update functions.
-        val timer = game.getCountDownTimer()
-        timer.setOnTickListener = { millisLeft ->
-            val secondsLeft = (millisLeft / 1000).toInt()
-            timerText.text = String.format("%02d:%02d", secondsLeft / 60, secondsLeft % 60)
-            progressBar.progress = ((60000 - millisLeft) * 100 / 60000).toInt()
-        }
-        timer.setOnFinishListener = {
-            timerText.text = "Workout Finished"
-            increaseRepsButton.isEnabled = false
-            increaseRepsButton.alpha = 0.5f
-            progressBar.progress = 100
-        }
-
-        game.setCurrentWorkout(Workout.RUN) // Testing pevents null pointer
-        val sharedPreferences: SharedPreferences = this.getSharedPreferences(SHARED_PREFERENCE_IDENTIFIER, Context.MODE_PRIVATE)
-        val prefenceEditor = sharedPreferences.edit()
-        prefenceEditor.putString(SHARED_PREFERENCE_IDENTIFIER, game.getCurrentWorkout().displayName).apply()
     }
 
+
+    // Change to when view appears
     override fun onResume() {
         super.onResume()
 
         // Start Workout
         game.getCountDownTimer().start()
     }
+
     fun updateReps() {
         val currentReps = findViewById<TextView>(R.id.currentScoreText)
         val personalBest = findViewById<TextView>(R.id.personalBestText)

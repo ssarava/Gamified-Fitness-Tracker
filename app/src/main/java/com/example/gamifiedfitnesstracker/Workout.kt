@@ -6,5 +6,7 @@ enum class Workout(val displayName : String) {
     PUSH_UP("Push Up"),
     BENCH_PRESS("Bench Press"),
     CURL("Curl"),
-    RUN("Run")
+    RUN("Run"),
+    DEFAULT("Exercise"),
+    CUSTOM("CUSTOM")
 }
