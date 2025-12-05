@@ -1,22 +1,32 @@
 package com.example.gamifiedfitnesstracker
-
 data class Player(
+    var userId: String? = null,
     var username: String? = null,
-    var bpBest: Int? = null,
-    var curlBest: Int? = null,
-    var pushUpBest: Int? = null,
-    var runBest: Int? = null,
-    var squatBest: Int? = null
+    var caloriesBurned: Int? = null,
+    var workoutDuration: Int? = null,   // in milliseconds
+    var workoutRecords: HashMap<Workout, Number?> = hashMapOf(
+//            Workout.SQUAT to null, Workout.PUSH_UP to null,
+            Workout.RUN to null
+        )
 ) {
-    override fun toString(): String = "name: $username\tbpBest: $bpBest\tcurlBest: " +
-            "$curlBest\tpushUpBest: $pushUpBest\trunBest: $runBest\tsquatBest: $squatBest\t"
-}
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-enum class Workout(val displayName: String? = null) {
-    BENCH_PRESS("Bench Press"),
-    CURL("Curl"),
-    PUSH_UP("Push Up"),
-    RUN("Run"),
-    SQUAT("Squat"),
-    NONE
+        val temp = other as Player
+        return caloriesBurned == temp.caloriesBurned &&
+                workoutDuration == temp.workoutDuration &&
+                userId == temp.userId &&
+                username == temp.username &&
+                workoutRecords == other.workoutRecords
+    }
+
+    override fun hashCode(): Int {
+        var result = caloriesBurned ?: 0
+        result = 31 * result + (workoutDuration ?: 0)
+        result = 31 * result + (userId?.hashCode() ?: 0)
+        result = 31 * result + (username?.hashCode() ?: 0)
+        result = 31 * result + workoutRecords.keys.toTypedArray().contentHashCode()
+        return result
+    }
 }

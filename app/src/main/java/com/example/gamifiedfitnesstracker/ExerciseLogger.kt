@@ -1,55 +1,36 @@
 package com.example.gamifiedfitnesstracker
 
-import android.content.Context
-import androidx.core.content.edit
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
-
 
 class ExerciseLogger {
-    private var exerciseDuration: Duration
     private var userScore = 0
-    private var currentReps = 0 // amount of exercise done. Potential rename for clarity.
-    private var caloriesBurned = 0.0
+    private var currentReps : Int = 0 // Represents #/amount of exercise done. Potential rename for clarity.
+    private var caloriesBurned : Double = 0.0
     private var personalBest = 0
 
-    private var currentGame: Workout? = null
+    private var currentWorkout: Workout? = null
+    private var countDownTimer: ExerciseTimer
 
     // User inputs the duration of exercise.
-    constructor(exerciseDuration: Duration) {
-        this.exerciseDuration = exerciseDuration
+    constructor(exerciseInMinutes: Int) {
+        this.countDownTimer = ExerciseTimer(exerciseInMinutes)
     }
 
     // Returns true if we have a new personal best.
-    fun updateReps(context: Context): Boolean {
-        this.userScore += 1
+    fun updateReps() : Boolean {
+        this.currentReps += 1
 
-        if (this.currentReps > personalBest) {
+        if(this.currentReps > personalBest) {
             this.personalBest = this.currentReps
-
-            val sp = context.getSharedPreferences(currentGame!!.displayName, Context.MODE_PRIVATE)
-            sp.edit(commit = true) {
-                putInt(currentGame!!.displayName, personalBest)
-            }
-            return true
         }
         return false
     }
 
     fun resetGame() {
-        this.exerciseDuration = 0.minutes
         this.userScore = 0
         this.currentReps = 0
         this.caloriesBurned = 0.0
         this.personalBest = 0
-    }
-
-    fun getExerciseDuration(): Duration {
-        return exerciseDuration
-    }
-
-    fun setExerciseDuration(duration: Duration) {
-        exerciseDuration = duration
+        this.currentWorkout = null
     }
 
     fun getUserScore(): Int {
@@ -84,12 +65,15 @@ class ExerciseLogger {
         personalBest = best
     }
 
-
-    fun getCurrentGame(): Workout {
-        return currentGame!!
+    fun getCurrentWorkout(): Workout {
+        return currentWorkout!!
     }
 
-    fun setCurrentGame(game: Workout) {
-        currentGame = game
+    fun setCurrentWorkout(game: Workout) {
+        currentWorkout = game
+    }
+
+    fun getCountDownTimer() : ExerciseTimer {
+        return this.countDownTimer
     }
 }

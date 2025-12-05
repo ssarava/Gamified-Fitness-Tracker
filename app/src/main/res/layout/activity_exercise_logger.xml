@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
@@ -10,46 +12,69 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alpha="0.2"
-        android:contentDescription="@string/filler_description"
         android:scaleType="fitCenter"
         android:src="@drawable/generic_exercise"
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="1.5"
-        app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="1.0" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintWidth_percent="1.0"
+        app:layout_constraintHeight_percent="1.5" />
 
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_color"
-        android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:background="@color/primary_color"
         android:padding="16dp"
+        android:gravity="center_horizontal"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Exercise Name -->
-        <TextView
-            android:id="@+id/exerciseName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:text="@string/exercise_name"
-            android:textColor="#FFF"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Exercise Name centered horizontally -->
+            <TextView
+                android:id="@+id/exerciseName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exercise Name"
+                android:textColor="#FFF"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Button aligned to the right -->
+            <ImageButton
+                android:id="@+id/leaderboardButton"
+                android:layout_width="65dp"
+                android:layout_height="77dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/trophy"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Progress + Timer Overlap -->
+
+
         <TextView
             android:id="@+id/timerText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/timer_text"
+            android:text="30:00"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -65,24 +90,27 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="250dp"
                 android:layout_height="40dp"
-                android:max="100" />
+                android:max="100"/>
 
             <!-- Timer Text -->
         </LinearLayout>
 
     </LinearLayout>
 
+
     <Button
         android:id="@+id/increaseRepsButton"
         android:layout_width="219dp"
         android:layout_height="128dp"
-        android:layout_marginBottom="280dp"
+        android:layout_marginBottom="300dp"
         android:background="@drawable/increase_reps_button"
-        android:text="@string/increase_reps"
+        android:text="Increase Reps"
         android:textColor="@android:color/white"
         android:textSize="24sp"
+
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.20"
         app:layout_constraintStart_toStartOf="parent"
@@ -106,13 +134,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/high_score"
+            android:text="Personal Best"
             android:textColor="#777777"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/personalBestText"
+            android:text="0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
@@ -137,13 +166,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/current_score"
+            android:text="Current Score"
             android:textColor="#777777"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/currentScoreText"
+            android:text="0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
