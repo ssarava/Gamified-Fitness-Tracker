@@ -1,5 +1,6 @@
 package com.example.gamifiedfitnesstracker
 
+import Player
 import android.annotation.SuppressLint
 import com.example.gamifiedfitnesstracker.MainActivity.Companion.DATABASE
 import com.google.firebase.database.DataSnapshot
@@ -40,10 +41,10 @@ class Leaderboard {
         when (currentSortMode) {
             Workout.BENCH_PRESS -> playersList.sortByDescending { it.bpBest }
             Workout.CURL -> playersList.sortByDescending { it.curlBest }
-            Workout.NONE -> return
             Workout.PUSH_UP -> playersList.sortByDescending { it.pushUpBest }
             Workout.RUN -> playersList.sortByDescending { it.runBest }
             Workout.SQUAT -> playersList.sortByDescending { it.squatBest }
+            else -> return
         }
         leaderboardAdapter.notifyDataSetChanged()
     }

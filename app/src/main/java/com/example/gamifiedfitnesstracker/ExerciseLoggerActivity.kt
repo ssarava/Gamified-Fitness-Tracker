@@ -1,5 +1,6 @@
 package com.example.gamifiedfitnesstracker
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.time.Duration.Companion.minutes
 import android.widget.ImageButton
+import com.example.gamifiedfitnesstracker.MainActivity.Companion.PREFERENCE_USERNAME
 
 class ExerciseLoggerActivity : AppCompatActivity()  {
 
@@ -27,7 +29,6 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
 
 
         // Initialize Game
-        val initDuration = 0.minutes
         game = ExerciseLogger(1) // Testing, Fill in with passed input
 
         // Pull Views
@@ -35,6 +36,9 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val increaseRepsButton = findViewById<Button>(R.id.increaseRepsButton)
         val leaderboardButton = findViewById<ImageButton>(R.id.leaderboardButton)
+        val backButton = findViewById<ImageButton>(R.id.logger_back_button)
+
+        backButton.setOnClickListener { goToMainMenu() }
 
         // NEW: Populate exercise name + background dynamically
         val exerciseNameView = findViewById<TextView>(R.id.exerciseName)
@@ -55,14 +59,8 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         measurementType = measurementType.lowercase().replaceFirstChar { it.titlecase() }
         increaseRepsButton.text = INCREASE_PREFIX + " " + measurementType
 
-//        if (measurementType.lowercase() == "miles") {
-//            increaseRepsButton.text = "Increase Miles"
-//        } else {
-//            increaseRepsButton.text = "Increase Reps"
-//        }
         increaseRepsButton.setOnClickListener { updateReps() }
-
-//        leaderboardButton.setOnClickListener { setContentView(R.layout.leaderboard) } Use when leaderboard implemented
+        leaderboardButton.setOnClickListener { goToLeaderboard() }
 
             // Set TimerView and Progress Bar Update functions.
             val timer = game.getCountDownTimer()
@@ -76,10 +74,12 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
                 increaseRepsButton.isEnabled = false
                 increaseRepsButton.alpha = 0.5f
                 progressBar.progress = 100
+                saveToFirebase()
             }
 
-    }
 
+
+    }
 
     // Change to when view appears
     override fun onResume() {
@@ -115,7 +115,23 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
     }
 
     fun saveToFirebase() {
-        // existing placeholder
+        val sp = getSharedPreferences("${packageName}_preferences", MODE_PRIVATE)
+        val username = sp.getString(PREFERENCE_USERNAME, null)
+//        val userRef = db.collection("users").document(username)
+
     }
+
+    fun goToLeaderboard() {
+        val intent = Intent(this, LeaderboardActivity::class.java)
+        startActivity(intent)
+        finish() // Remove from stack
+    }
+
+    fun goToMainMenu() {
+        val intent = Intent(this, MainMenuActivity::class.java)
+        startActivity(intent)
+        finish() // Remove from stack
+    }
+
 }
 

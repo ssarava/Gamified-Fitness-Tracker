@@ -21,14 +21,9 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- Back Button -->
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back_button"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/white" />
+        <include
+            layout="@layout/back_button"
+            android:id="@+id/btnBack" />
 
         <!-- Trophy Icon -->
         <ImageView

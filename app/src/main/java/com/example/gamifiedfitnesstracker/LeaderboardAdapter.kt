@@ -44,10 +44,10 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
             when (leaderboard.getCurrentSortMode()) {
                 Workout.BENCH_PRESS -> statToString(player.bpBest, false)
                 Workout.CURL -> statToString(player.curlBest, false)
-                Workout.NONE -> ""
                 Workout.PUSH_UP -> statToString(player.pushUpBest, false)
                 Workout.RUN -> statToString(player.runBest, true)
                 Workout.SQUAT -> statToString(player.squatBest, false)
+                else -> ""
             }
 
         // Highlight current user

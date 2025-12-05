@@ -136,10 +136,10 @@ class LeaderboardActivity : AppCompatActivity() {
                 when (sortMode) {
                     Workout.BENCH_PRESS -> getString(R.string.bp_enum)
                     Workout.CURL -> getString(R.string.curl_enum)
-                    Workout.NONE -> ""
                     Workout.PUSH_UP -> getString(R.string.pushUp_enum)
                     Workout.RUN -> getString(R.string.run_enum)
                     Workout.SQUAT -> getString(R.string.squat_enum)
+                    else -> ""
                 }
         }
     }
@@ -167,9 +167,9 @@ class LeaderboardActivity : AppCompatActivity() {
             Workout.BENCH_PRESS -> highlightButton(btnSortBenchPress)
             Workout.CURL -> highlightButton(btnSortCurl)
             Workout.PUSH_UP -> highlightButton(btnSortPushUp)
-            Workout.NONE -> return
             Workout.RUN -> highlightButton(btnSortRun)
             Workout.SQUAT -> highlightButton(btnSortSquat)
+            else -> return
         }
     }
 

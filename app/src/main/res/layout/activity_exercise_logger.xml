@@ -37,25 +37,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <include
+                layout="@layout/back_button"
+                android:id="@+id/logger_back_button" />
+
             <!-- Exercise Name centered horizontally -->
             <TextView
                 android:id="@+id/exerciseName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="191dp"
+                android:layout_height="64dp"
                 android:text="Exercise Name"
                 android:textColor="#FFF"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Button aligned to the right -->
             <ImageButton
                 android:id="@+id/leaderboardButton"
-                android:layout_width="65dp"
-                android:layout_height="77dp"
+                android:layout_width="47dp"
+                android:layout_height="48dp"
                 android:background="@null"
                 android:scaleType="fitXY"
                 android:src="@drawable/trophy"

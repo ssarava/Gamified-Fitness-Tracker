@@ -21,6 +21,7 @@ class MainMenuActivity : AppCompatActivity() {
     private lateinit var benchPressBestTV: TextView
     private lateinit var curlBestTV: TextView
     private val database = FirebaseDatabase.getInstance().reference
+    private lateinit var userName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +46,10 @@ class MainMenuActivity : AppCompatActivity() {
     }
 
     private fun setUsernameAndWelcomeMessage() {
-        val username = intent.getStringExtra("USERNAME")!!      // Get username from intent
-        welcomeTV.text = resources.getString(R.string.named_welcome, username)
+        userName = intent.getStringExtra("USERNAME")!!      // Get username from intent
+
+        welcomeTV.text = resources.getString(R.string.named_welcome, userName)
+
     }
 
     private fun loadPersonalBestsFromFirebase() {
@@ -78,6 +81,7 @@ class MainMenuActivity : AppCompatActivity() {
         })
     }
 
+
     private fun updatePersonalBestsUI(squat: Int, pushUp: Int, run: Int, bp: Int, curl: Int) {
         runOnUiThread {
             squatBestTV.text = squat.toString()
@@ -88,11 +92,11 @@ class MainMenuActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupClickListeners() = btnPlayGame.setOnClickListener { goToExerciseLogger() }
+    private fun setupClickListeners() = btnPlayGame.setOnClickListener { goToSelectWorkout() }
 
-    private fun goToExerciseLogger() {
-        val intent = Intent(this, ExerciseLoggerActivity::class.java)
-        intent.putExtra("USERNAME", intent.getStringExtra("USERNAME")!!)
+    private fun goToSelectWorkout() {
+        val intent = Intent(this, SelectWorkoutActivity::class.java)
+        intent.putExtra("USERNAME", userName)
         startActivity(intent)
         // no finish() since we want to return to the main menu maybe via nathan's screen
     }

@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                         saveLoginState(username, password)
 
                         // Navigate to the next activity
-                        goToNextScreen(LeaderboardActivity::class.java)
+                        goToNextScreen(MainMenuActivity::class.java)
                     }
 
                     // Password incorrect - navigate to FailedLoginActivity

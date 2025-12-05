@@ -8,5 +8,6 @@ enum class Workout(val displayName : String) {
     CURL("Curl"),
     RUN("Run"),
     DEFAULT("Exercise"),
-    CUSTOM("CUSTOM")
+    CUSTOM("CUSTOM"),
+    NONE("")
 }

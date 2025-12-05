@@ -7,6 +7,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
 import android.widget.Toast
+import com.example.gamifiedfitnesstracker.Constants.INTENT_STRING
+import com.example.gamifiedfitnesstracker.Constants.LEADERBOARD_INTENT_STRING
 
 class SelectWorkoutActivity : AppCompatActivity() {
 
@@ -35,12 +37,15 @@ class SelectWorkoutActivity : AppCompatActivity() {
         }
     }
 
+
     private fun sendWorkout(workout: Workout, measurement: String) {
         val intent = Intent(this, ExerciseLoggerActivity::class.java)
         intent.putExtra("workout_name", workout.displayName)
         intent.putExtra("workout_enum", workout.name)
         intent.putExtra("measurement_type", measurement)
         startActivity(intent)
+
+        finish() // Remove from stack
     }
 
     private fun openCustomWorkoutDialog() {
@@ -81,8 +86,14 @@ class SelectWorkoutActivity : AppCompatActivity() {
                 intent.putExtra("workout_enum", "CUSTOM")
                 intent.putExtra("measurement_type", measure)
                 startActivity(intent)
+
+                finish() // Remove from stack
+
             }
             .setNegativeButton("Cancel", null)
             .show()
+
+
+
     }
 }
