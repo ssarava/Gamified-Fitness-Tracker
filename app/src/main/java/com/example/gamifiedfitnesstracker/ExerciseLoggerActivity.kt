@@ -1,10 +1,8 @@
-package com.example.gamifiedfitnesstracker
+package com.example.testerapplication
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -22,6 +20,12 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exercise_logger)
 
+        // NEW: Get values passed from SelectWorkoutActivity
+        val workoutName = intent.getStringExtra("workout_name") ?: "Exercise"
+        val workoutEnumName = intent.getStringExtra("workout_enum")
+        val measurementType = intent.getStringExtra("measurement_type") ?: "reps"
+
+
         // Initialize Game
         val initDuration = 0.minutes
         game = ExerciseLogger(1) // Testing, Fill in with passed input
@@ -32,8 +36,18 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         val increaseRepsButton = findViewById<Button>(R.id.increaseRepsButton)
         val leaderboardButton = findViewById<ImageButton>(R.id.leaderboardButton)
 
-        // Assumption: There will be a Button / Input that allows you to select your exercise.
-        // Current Implementation: User inputs which exercise, and autofill takes care of the rest
+        // NEW: Populate exercise name + background dynamically
+        val exerciseNameView = findViewById<TextView>(R.id.exerciseName)
+
+        if (workoutEnumName != null && workoutEnumName != "CUSTOM") {
+            // It's a built-in exercise
+            val workoutEnum = Workout.valueOf(workoutEnumName)
+            game.setCurrentGame(workoutEnum)
+            setBackgroundExercise(workoutEnum)
+        } else {
+            // Custom workout entry
+            exerciseNameView.text = workoutName
+        }
 
         // findViewById(R.id.userInput).text == "selected exercise"
         // Need to pass in an enum
@@ -41,10 +55,16 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
         if (true) {
 //            setBackgroundExercise(selectedExercise)
             setBackgroundExercise(Workout.RUN) // Testing
+        // NEW: Change button label depending on measurement
+
+        if (measurementType.lowercase() == "miles") {
+            increaseRepsButton.text = "Increase Miles"
+        } else {
+            increaseRepsButton.text = "Increase Reps"
         }
         increaseRepsButton.setOnClickListener { updateReps() }
 //        leaderboardButton.setOnClickListener { setContentView(R.layout.leaderboard) } Use when leaderboard implemented
-        
+
 
 
         // Set TimerView and Progress Bar Update functions.
@@ -99,7 +119,7 @@ class ExerciseLoggerActivity : AppCompatActivity()  {
     }
 
     fun saveToFirebase() {
-
+        // existing placeholder
     }
 }
 

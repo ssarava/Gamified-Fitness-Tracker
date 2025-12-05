@@ -10,7 +10,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        intent = Intent(this, ExerciseLoggerActivity::class.java)
+
+        // NEW: Go to workout selection page instead
+        val intent = Intent(this, SelectWorkoutActivity::class.java)
         startActivity(intent)
     }
 }
