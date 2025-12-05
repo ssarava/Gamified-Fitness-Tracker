@@ -1,4 +1,4 @@
-package com.example.testerapplication
+package com.example.gamifiedfitnesstracker
 
 // for now: squats, push-ups, runs
 enum class Workout(val displayName : String) {

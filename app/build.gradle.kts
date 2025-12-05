@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.testerapplication"
+    namespace = "com.example.gamifiedfitnesstracker"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.testerapplication"
+        applicationId = "com.example.gamifiedfitnesstracker"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

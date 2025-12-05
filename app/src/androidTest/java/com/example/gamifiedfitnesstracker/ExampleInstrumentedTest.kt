@@ -1,4 +1,4 @@
-package com.example.testerapplication
+package com.example.gamifiedfitnesstracker
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

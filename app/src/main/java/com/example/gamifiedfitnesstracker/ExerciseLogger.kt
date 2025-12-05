@@ -1,7 +1,4 @@
-package com.example.testerapplication
-
-import android.content.Context
-import android.content.SharedPreferences
+package com.example.gamifiedfitnesstracker
 
 
 class ExerciseLogger {

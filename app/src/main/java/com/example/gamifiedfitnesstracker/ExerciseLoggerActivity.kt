@@ -1,9 +1,8 @@
-package com.example.testerapplication
+package com.example.gamifiedfitnesstracker
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView

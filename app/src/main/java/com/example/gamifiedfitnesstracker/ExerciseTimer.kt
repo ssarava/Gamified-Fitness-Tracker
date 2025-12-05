@@ -1,12 +1,6 @@
-package com.example.testerapplication
+package com.example.gamifiedfitnesstracker
 
 import android.os.CountDownTimer
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
-import org.w3c.dom.Text
-import kotlin.div
-import kotlin.text.toInt
 
 class ExerciseTimer : CountDownTimer{
     private var lengthInMinutes: Int

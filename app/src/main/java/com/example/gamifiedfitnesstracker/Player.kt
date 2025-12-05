@@ -1,4 +1,4 @@
-package com.example.testerapplication
+package com.example.gamifiedfitnesstracker
 data class Player(
     var userId: String? = null,
     var username: String? = null,
