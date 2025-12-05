@@ -7,7 +7,7 @@ class ExerciseTimer : CountDownTimer{
     private var timeLeft : Long =  1L
 
     constructor(exerciseInMinutes : Int) :
-            super(0 * exerciseInMinutes * 60 * 1000L, 1000L) {
+            super(exerciseInMinutes * 60 * 1000L, 1000L) {
                 this.lengthInMinutes = exerciseInMinutes
     }
 
