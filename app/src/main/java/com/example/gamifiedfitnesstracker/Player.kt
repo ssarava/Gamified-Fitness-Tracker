@@ -1,3 +1,5 @@
+package com.example.gamifiedfitnesstracker
+
 data class Player(
     var username: String? = null,
     var bpBest: Int? = null,

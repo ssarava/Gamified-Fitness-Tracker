@@ -1,13 +1,14 @@
 package com.example.gamifiedfitnesstracker
 
-// for now: squats, push-ups, runs
-enum class Workout(val displayName : String) {
-    SQUAT("Squat"),
-    PUSH_UP("Push Up"),
+enum class Workout(val displayName: String) {
     BENCH_PRESS("Bench Press"),
     CURL("Curl"),
+    CUSTOM("Custom"),
+    DEFAULT("Default"),
+    NONE(""),
+    PUSH_UP("Push Up"),
     RUN("Run"),
-    DEFAULT("Exercise"),
-    CUSTOM("CUSTOM"),
-    NONE("")
+    SQUAT("Squat");
+
+    fun isUnimplemented() = this == CUSTOM || this == DEFAULT || this == NONE
 }

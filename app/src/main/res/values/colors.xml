@@ -12,7 +12,6 @@
     <color name="silver">#C0C0C0</color>
     <color name="bronze">#CD7F32</color>
     <color name="current_user_highlight">#E3F2FD</color>
-
     <color name="error_color">#D32F2F</color>
     <color name="error_light">#FFEBEE</color>
     <color name="error_dark">#B71C1C</color>

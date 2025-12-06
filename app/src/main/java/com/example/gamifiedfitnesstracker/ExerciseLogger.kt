@@ -1,79 +1,64 @@
 package com.example.gamifiedfitnesstracker
 
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import kotlin.math.max
 
 class ExerciseLogger {
     private var userScore = 0
-    private var currentReps : Int = 0 // Represents #/amount of exercise done. Potential rename for clarity.
-    private var caloriesBurned : Double = 0.0
+    private var repsCompleted: Int = 0
+    private var caloriesBurned: Double = 0.0
     private var personalBest = 0
-
-    private var currentWorkout: Workout? = null
+    private var currentWorkout: String
     private var countDownTimer: ExerciseTimer
 
     // User inputs the duration of exercise.
-    constructor(exerciseInMinutes: Int) {
-        this.countDownTimer = ExerciseTimer(exerciseInMinutes)
+    constructor(exerciseInMinutes: Int, personalBestIn: Int, workOutNameIn: String) {
+        countDownTimer = ExerciseTimer(exerciseInMinutes)
+        currentWorkout = workOutNameIn
+        personalBest = personalBestIn
     }
 
-    // Returns true if we have a new personal best.
-    fun updateReps() : Boolean {
-        this.currentReps += 1
+    fun updateReps() {
+        repsCompleted += 1
+        personalBest = max(repsCompleted, personalBest)
+    }
 
-        if(this.currentReps > personalBest) {
-            this.personalBest = this.currentReps
-        }
-        return false
+    fun saveToFirebase(context: Context) {
+        val sp = context.getSharedPreferences("${context.packageName}_preferences", MODE_PRIVATE)
+        val username = sp.getString(Utilities.PREFERENCE_USERNAME, "")!!
+        Utilities.USERS.child(username).child("Personal Bests")
+            .child(Workout.valueOf(currentWorkout).displayName)
+            .setValue(personalBest)
     }
 
     fun resetGame() {
-        this.userScore = 0
-        this.currentReps = 0
-        this.caloriesBurned = 0.0
-        this.personalBest = 0
-        this.currentWorkout = null
+        userScore = 0
+        repsCompleted = 0
+        caloriesBurned = 0.0
+        personalBest = 0
+        currentWorkout = ""
     }
 
-    fun getUserScore(): Int {
-        return userScore
-    }
+    fun getUserScore() = userScore
 
     fun setUserScore(score: Int) {
         userScore = score
     }
 
-    fun getCurrentReps(): Int {
-        return currentReps
-    }
+    fun getCurrentReps() = repsCompleted
 
     fun setCurrentReps(reps: Int) {
-        currentReps = reps
+        repsCompleted = reps
     }
 
-    fun getCaloriesBurned(): Double {
-        return caloriesBurned
-    }
+    fun getPersonalBest() = personalBest
 
-    fun setCaloriesBurned(calories: Double) {
-        caloriesBurned = calories
-    }
-
-    fun getPersonalBest(): Int {
-        return personalBest
-    }
-
-    fun setPersonalBest(best: Int) {
-        personalBest = best
-    }
-
-    fun getCurrentWorkout(): Workout {
-        return currentWorkout!!
-    }
+    fun getCurrentWorkout() = Workout.valueOf(currentWorkout)
 
     fun setCurrentWorkout(game: Workout) {
-        currentWorkout = game
+        currentWorkout = game.name
     }
 
-    fun getCountDownTimer() : ExerciseTimer {
-        return this.countDownTimer
-    }
+    fun getCountDownTimer() = countDownTimer
 }

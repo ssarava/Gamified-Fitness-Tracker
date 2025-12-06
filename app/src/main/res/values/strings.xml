@@ -1,4 +1,6 @@
 <resources>
+
+    <!-- Leaderboard Activity Strings -->
     <string name="app_name">GroupProjectPlayground</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="workout_challenge">Workout Challenge</string>
@@ -35,7 +37,6 @@
     <string name="suggestions">Suggestions:</string>
     <string name="check_password">Double-check your password</string>
     <string name="check_caps_lock">Make sure Caps Lock is off</string>
-<!--    "User with username"-->
 
     <!-- Exercise Logger Activity Strings -->
     <string name="filler_description">filler_description</string>
@@ -44,6 +45,10 @@
     <string name="increase_reps">Increase Reps</string>
     <string name="high_score">High Score</string>
     <string name="current_score">Current Score</string>
+    <string name="workout_finished">Workout Finished</string>
+    <string name="increase_reps_btn_test">Add %1$s</string>
+    <string name="personal_best">Personal Best</string>
+    <string name="empty_score_value">%1$d</string>
 
     <!--    LeaderboardAdapter Strings-->
     <string name="tvUsername_text_you">%1$s (You)</string>
@@ -59,8 +64,8 @@
     <string name="curl">💪 Curl</string>
     <string name="play_game">PLAY GAME</string>
     <string name="default_best">0</string>
-
     <string name="fitness_journey_welcome">Welcome to your fitness journey!</string>
     <string name="my_fitness_journey">My Fitness Journey</string>
     <string name="named_welcome">Welcome, %1$s</string>
+
 </resources>

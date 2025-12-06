@@ -19,8 +19,8 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_leaderboard, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_leaderboard, parent, false)
         return ViewHolder(view)
     }
 
@@ -40,15 +40,14 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
         holder.tvUsername.text = player.username
 
         // Set metric value based on current sort mode
-        holder.tvMetricValue.text =
-            when (leaderboard.getCurrentSortMode()) {
-                Workout.BENCH_PRESS -> statToString(player.bpBest, false)
-                Workout.CURL -> statToString(player.curlBest, false)
-                Workout.PUSH_UP -> statToString(player.pushUpBest, false)
-                Workout.RUN -> statToString(player.runBest, true)
-                Workout.SQUAT -> statToString(player.squatBest, false)
-                else -> ""
-            }
+        holder.tvMetricValue.text = when (leaderboard.getCurrentSortMode()) {
+            Workout.BENCH_PRESS -> statToString(player.bpBest, false)
+            Workout.CURL -> statToString(player.curlBest, false)
+            Workout.PUSH_UP -> statToString(player.pushUpBest, false)
+            Workout.RUN -> statToString(player.runBest, true)
+            Workout.SQUAT -> statToString(player.squatBest, false)
+            else -> TODO("need to retrieve custom measurement")
+        }
 
         // Highlight current user
         val isCurrUser = player.username == leaderboard.getCurrentUsername()

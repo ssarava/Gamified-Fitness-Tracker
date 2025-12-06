@@ -2,21 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    tools:context=".SelectWorkoutActivity">
 
     <EditText
         android:id="@+id/customWorkoutName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Workout name (ex: Swimming)"
+        android:autofillHints="reps, miles"
         android:inputType="textCapWords" />
 
     <EditText
         android:id="@+id/customMeasurement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Measurement (reps, miles, etc.)"
+        android:hint="Unit (reps, miles, etc.)"
+        android:autofillHints="reps, miles"
         android:inputType="text"
         android:layout_marginTop="12dp" />
 </LinearLayout>

@@ -12,6 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alpha="0.2"
+        android:contentDescription="@string/default_best"
         android:scaleType="fitCenter"
         android:src="@drawable/generic_exercise"
 
@@ -46,7 +47,7 @@
                 android:id="@+id/exerciseName"
                 android:layout_width="191dp"
                 android:layout_height="64dp"
-                android:text="Exercise Name"
+                android:text="@string/exercise_name"
                 android:textColor="#FFF"
                 android:textSize="28sp"
                 android:textStyle="bold"
@@ -59,9 +60,10 @@
             <!-- Button aligned to the right -->
             <ImageButton
                 android:id="@+id/leaderboardButton"
-                android:layout_width="47dp"
-                android:layout_height="48dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="@null"
+                android:contentDescription="@string/app_logo"
                 android:scaleType="fitXY"
                 android:src="@drawable/trophy"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -72,14 +74,12 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Progress + Timer Overlap -->
-
-
         <TextView
             android:id="@+id/timerText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="30:00"
+            android:text="@string/timer_text"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -109,7 +109,7 @@
         android:layout_height="128dp"
         android:layout_marginBottom="300dp"
         android:background="@drawable/increase_reps_button"
-        android:text="Increase Reps"
+        android:text="@string/increase_reps"
         android:textColor="@android:color/white"
         android:textSize="24sp"
 
@@ -139,14 +139,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Personal Best"
+            android:text="@string/personal_best"
             android:textColor="#777777"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/personalBestText"
-            android:text="0"
+            android:text="@string/empty_score_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
@@ -171,14 +171,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Current Score"
+            android:text="@string/current_score"
             android:textColor="#777777"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/currentScoreText"
-            android:text="0"
+            android:text="@string/empty_score_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"

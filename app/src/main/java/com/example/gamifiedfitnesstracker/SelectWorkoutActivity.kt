@@ -2,13 +2,12 @@ package com.example.gamifiedfitnesstracker
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
-import android.widget.Toast
-import com.example.gamifiedfitnesstracker.Constants.INTENT_STRING
-import com.example.gamifiedfitnesstracker.Constants.LEADERBOARD_INTENT_STRING
 
 class SelectWorkoutActivity : AppCompatActivity() {
 
@@ -17,34 +16,44 @@ class SelectWorkoutActivity : AppCompatActivity() {
         setContentView(R.layout.activity_select_workout)
 
         findViewById<LinearLayout>(R.id.btnSquat).setOnClickListener {
-            sendWorkout(Workout.SQUAT, "reps")
+            sendWorkout(Workout.SQUAT)
         }
         findViewById<LinearLayout>(R.id.btnPushUp).setOnClickListener {
-            sendWorkout(Workout.PUSH_UP, "reps")
+            sendWorkout(Workout.PUSH_UP)
         }
         findViewById<LinearLayout>(R.id.btnRun).setOnClickListener {
             sendWorkout(Workout.RUN, "miles")
         }
         findViewById<LinearLayout>(R.id.btnBench).setOnClickListener {
-            sendWorkout(Workout.BENCH_PRESS, "reps")
+            sendWorkout(Workout.BENCH_PRESS)
         }
         findViewById<LinearLayout>(R.id.btnCurl).setOnClickListener {
-            sendWorkout(Workout.CURL, "reps")
+            sendWorkout(Workout.CURL)
         }
-
         findViewById<LinearLayout>(R.id.btnOther).setOnClickListener {
             openCustomWorkoutDialog()
         }
     }
 
+    private fun sendWorkout(workout: Workout, measurement: String = "reps") {
+        val sp = getSharedPreferences("${packageName}_preferences", MODE_PRIVATE)
+        val personalBest =
+            when (workout) {
+                Workout.BENCH_PRESS -> intent.getStringExtra(Utilities.BEST_BENCH)!!
+                Workout.CURL -> intent.getStringExtra(Utilities.BEST_CURL)!!
+                Workout.CUSTOM -> sp.getString("NULL_CUSTOM", "NULL_CUSTOM")
+                Workout.DEFAULT -> sp.getString("NULL_DEFAULT", "NULL_DEFAULT")
+                Workout.NONE -> sp.getString("NULL_NONE", "NULL_NONE")
+                Workout.PUSH_UP -> intent.getStringExtra(Utilities.BEST_PUSH_UP)!!
+                Workout.RUN -> intent.getStringExtra(Utilities.BEST_RUN)!!
+                Workout.SQUAT -> intent.getStringExtra(Utilities.BEST_SQUAT)!!
+            }
 
-    private fun sendWorkout(workout: Workout, measurement: String) {
         val intent = Intent(this, ExerciseLoggerActivity::class.java)
-        intent.putExtra("workout_name", workout.displayName)
-        intent.putExtra("workout_enum", workout.name)
-        intent.putExtra("measurement_type", measurement)
+        intent.putExtra(Utilities.WORKOUT_NAME, workout.name)
+        intent.putExtra(Utilities.WORKOUT_BEST, personalBest)
+        intent.putExtra(Utilities.UNIT, measurement)
         startActivity(intent)
-
         finish() // Remove from stack
     }
 
@@ -53,47 +62,59 @@ class SelectWorkoutActivity : AppCompatActivity() {
         // Use the updated dialog XML
         val dialogLayout = layoutInflater.inflate(R.layout.custom_workout, null)
 
-        val nameInput = dialogLayout.findViewById<EditText>(R.id.customWorkoutName)
-        val measurementInput = dialogLayout.findViewById<EditText>(R.id.customMeasurement)
+        val nameInput: EditText = dialogLayout.findViewById(R.id.customWorkoutName)
+        val measurementInput: EditText = dialogLayout.findViewById(R.id.customMeasurement)
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("Enter Custom Exercise")
             .setView(dialogLayout)
-            .setPositiveButton("Start") { _, _ ->
+            .setPositiveButton("Start") { dialog, which ->
                 val name = nameInput.text.toString().trim()
-                val measure = measurementInput.text.toString().trim()
+                val measurement = measurementInput.text.toString().trim()
 
-                if (name.isEmpty()) {
-                    Toast.makeText(
-                        this,
-                        "Please enter a workout name",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setPositiveButton
-                }
+                if (name.isEmpty()) nameInput.error = "Invalid Workout Name"
+                if (measurement.isEmpty()) measurementInput.error = "Invalid measurement type"
 
-                if (measure.isEmpty()) {
-                    Toast.makeText(
-                        this,
-                        "Please enter a measurement type",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setPositiveButton
-                }
+                val workout = Workout.CUSTOM
+                dialog.dismiss()
+                sendWorkout(workout, measurement)
 
-                val intent = Intent(this, ExerciseLoggerActivity::class.java)
-                intent.putExtra("workout_name", name)
-                intent.putExtra("workout_enum", "CUSTOM")
-                intent.putExtra("measurement_type", measure)
-                startActivity(intent)
+            }.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .create()
+        dialog.show()
 
-                finish() // Remove from stack
+        val startBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        startBtn.isEnabled = false
 
+        nameInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                startBtn.isEnabled = !s.isNullOrEmpty() && !measurementInput.text.isNullOrEmpty()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
 
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    nameInput.error = "Invalid Workout Name"
+                    startBtn.isEnabled = false
+                }
+            }
+        })
 
+        measurementInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                startBtn.isEnabled = !nameInput.text.isNullOrEmpty() && !s.isNullOrEmpty()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    measurementInput.error = "Invalid Measurement Type"
+                    startBtn.isEnabled = false
+                }
+//                startBtn.isEnabled = s.isNullOrEmpty() && measurementInput.text.isNullOrEmpty()
+            }
+        })
     }
 }

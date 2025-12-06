@@ -2,13 +2,12 @@ package com.example.gamifiedfitnesstracker
 
 import android.os.CountDownTimer
 
-class ExerciseTimer : CountDownTimer{
+class ExerciseTimer : CountDownTimer {
     private var lengthInMinutes: Int
-    private var timeLeft : Long =  1L
+    private var timeLeft: Long = 1L
 
-    constructor(exerciseInMinutes : Int) :
-            super(exerciseInMinutes * 60 * 1000L, 1000L) {
-                this.lengthInMinutes = exerciseInMinutes
+    constructor(minutes: Int) : super(minutes * 60 * 1000L, 1000L) {
+        lengthInMinutes = minutes
     }
 
     var setOnTickListener: ((millisLeft: Long) -> Unit)? = null
@@ -22,12 +21,7 @@ class ExerciseTimer : CountDownTimer{
         setOnFinishListener?.invoke()
     }
 
-    fun getLengthInMinutes() : Int {
-        return this.lengthInMinutes
-    }
+    fun getLengthInMinutes() = lengthInMinutes
 
-    fun getTimeLeft() : Long {
-        return this.timeLeft
-    }
-
+    fun getTimeLeft() = timeLeft
 }
