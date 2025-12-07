@@ -99,8 +99,9 @@ class MainActivity : AppCompatActivity() {
         usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    // User exists, check password
+                    // User exists, check hashed password to stored password
                     val storedPassword = snapshot.child("Password").getValue(String::class.java)
+                    val password = Utilities.hashPassword(password)
 
                     // Password correct - successful login
                     if (storedPassword == password) {

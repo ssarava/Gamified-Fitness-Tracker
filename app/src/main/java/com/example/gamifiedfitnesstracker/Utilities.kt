@@ -6,6 +6,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,7 +35,7 @@ object Utilities {
         val date = SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.US).format(Date())
         val userData = hashMapOf(
             "Username" to user,
-            "Password" to pw,
+            "Password" to hashPassword(pw),
             "Created On" to date,
             "Personal Bests" to hashMapOf(
                 Workout.BENCH_PRESS.displayName to if (test) r.nextInt(101) else 0,
@@ -46,6 +47,14 @@ object Utilities {
             )
         )
         return userData
+    }
+
+    // Hash password using SHA-256
+    fun hashPassword(password: String): String {
+        val bytes = password.toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
 
     fun clearTestData(all: Boolean = false, vararg usernames: String) {
