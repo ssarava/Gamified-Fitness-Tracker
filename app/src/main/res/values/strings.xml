@@ -53,6 +53,10 @@
     <!--    LeaderboardAdapter Strings-->
     <string name="tvUsername_text_you">%1$s (You)</string>
 
+    <!--    Select Workout Activity Strings-->
+    <string name="custom">Custom</string>
+    <string name="select_exercise">Select Exercise</string>
+
     <!--    MainMenuActivity Strings-->
     <string name="pushUp">💪 Push-up</string>
     <string name="main_menu_title">My Fitness Journey</string>

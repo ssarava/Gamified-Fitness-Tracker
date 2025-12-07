@@ -8,12 +8,15 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
+import android.widget.ImageButton
 
 class SelectWorkoutActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_workout)
+
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
 
         findViewById<LinearLayout>(R.id.btnSquat).setOnClickListener {
             sendWorkout(Workout.SQUAT)
@@ -54,7 +57,6 @@ class SelectWorkoutActivity : AppCompatActivity() {
         intent.putExtra(Utilities.WORKOUT_BEST, personalBest)
         intent.putExtra(Utilities.UNIT, measurement)
         startActivity(intent)
-        finish() // Remove from stack
     }
 
     private fun openCustomWorkoutDialog() {
@@ -84,18 +86,20 @@ class SelectWorkoutActivity : AppCompatActivity() {
         dialog.show()
 
         val startBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val regex = Regex("^[a-zA-Z_]+$")
         startBtn.isEnabled = false
 
         nameInput.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                startBtn.isEnabled = !s.isNullOrEmpty() && !measurementInput.text.isNullOrEmpty()
+                startBtn.isEnabled =
+                    !s.isNullOrEmpty() && s.matches(regex) && measurementInput.text.matches(regex)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty()) {
-                    nameInput.error = "Invalid Workout Name"
+                if (s.isNullOrEmpty() || !s.matches(regex)) {
+                    nameInput.error = "Workout name must contain only letters"
                     startBtn.isEnabled = false
                 }
             }
@@ -103,17 +107,17 @@ class SelectWorkoutActivity : AppCompatActivity() {
 
         measurementInput.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                startBtn.isEnabled = !nameInput.text.isNullOrEmpty() && !s.isNullOrEmpty()
+                startBtn.isEnabled =
+                    nameInput.text.matches(regex) && !s.isNullOrEmpty() && s.matches(regex)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty()) {
-                    measurementInput.error = "Invalid Measurement Type"
+                if (s.isNullOrEmpty() || !s.matches(regex)) {
+                    measurementInput.error = "Unit must contain only letters"
                     startBtn.isEnabled = false
                 }
-//                startBtn.isEnabled = s.isNullOrEmpty() && measurementInput.text.isNullOrEmpty()
             }
         })
     }

@@ -48,7 +48,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         currentRepsTV.text = resources.getString(R.string.empty_score_value, game.getCurrentReps())
         personalBestTV.text = resources.getString(R.string.empty_score_value, workoutBest)
 
-        backButton.setOnClickListener { goToMainMenu() }
+        backButton.setOnClickListener { finish() }
 
         // NEW: Populate exercise name + background dynamically
         val exerciseNameView = findViewById<TextView>(R.id.exerciseName)
@@ -69,7 +69,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         workoutUnit = workoutUnit.lowercase().replaceFirstChar { it.titlecase() }
         increaseRepsButton.text = resources.getString(R.string.increase_reps_btn_test, workoutUnit)
         increaseRepsButton.setOnClickListener { updateViews() }
-        leaderboardButton.setOnClickListener { goToLeaderboard() }
 
         // Set TimerView and Progress Bar Update functions.
         val timer = game.getCountDownTimer()
@@ -86,7 +85,10 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             progressBar.progress = 100
             goToLeaderboard()
         }
-
+        leaderboardButton.setOnClickListener {
+            timer.cancel()
+            goToLeaderboard()
+        }
 
     }
 
@@ -120,12 +122,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         val exerciseNameView = findViewById<TextView>(R.id.exerciseName)
         imageView.setImageResource(background)
         exerciseNameView.text = selectedExercise.displayName
-    }
-
-    fun goToMainMenu() {
-        val intent = Intent(this, MainMenuActivity::class.java)
-        startActivity(intent)
-        finish() // Remove from stack
     }
 
     fun goToLeaderboard() {

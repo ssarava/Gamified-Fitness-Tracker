@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
@@ -7,29 +8,51 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select Exercise"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="@color/primary_color"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="-13dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/back_button"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/primary_color" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp"
+                android:text="@string/select_exercise"
+                android:textColor="@color/primary_color"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- GRID OF EXERCISES -->
         <GridLayout
             android:id="@+id/exerciseGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:alignmentMode="alignMargins"
             android:columnCount="2"
             android:rowCount="3"
-            android:alignmentMode="alignMargins"
             android:rowOrderPreserved="false">
 
             <!-- SQUAT -->
@@ -37,22 +60,22 @@
                 android:id="@+id/btnSquat"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="12dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/white_box">
+                android:background="@drawable/white_box"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/squats"
-                    android:contentDescription="Squat exercise image" />
+                    android:contentDescription="@string/default_best"
+                    android:src="@drawable/squats" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Squat"
+                    android:text="@string/squat_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -61,22 +84,22 @@
                 android:id="@+id/btnPushUp"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="12dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/white_box">
+                android:background="@drawable/white_box"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/push_up"
-                    android:contentDescription="Push up exercise image" />
+                    android:contentDescription="@string/default_best"
+                    android:src="@drawable/push_up" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Push Up"
+                    android:text="@string/pushUp_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -85,22 +108,22 @@
                 android:id="@+id/btnRun"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="12dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/white_box">
+                android:background="@drawable/white_box"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/running"
-                    android:contentDescription="Running exercise image" />
+                    android:contentDescription="@string/default_best"
+                    android:src="@drawable/running" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Running"
+                    android:text="@string/run_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -109,22 +132,22 @@
                 android:id="@+id/btnBench"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="12dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/white_box">
+                android:background="@drawable/white_box"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/bench"
-                    android:contentDescription="Bench press exercise image" />
+                    android:contentDescription="@string/default_best"
+                    android:src="@drawable/bench" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bench Press"
+                    android:text="@string/bp_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -133,22 +156,22 @@
                 android:id="@+id/btnCurl"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="12dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/white_box">
+                android:background="@drawable/white_box"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/curl"
-                    android:contentDescription="Curl exercise image" />
+                    android:contentDescription="@string/default_best"
+                    android:src="@drawable/curl" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Curl"
+                    android:text="@string/curl_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -157,22 +180,22 @@
                 android:id="@+id/btnOther"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="12dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/white_box">
+                android:background="@drawable/white_box"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/swimming"
-                    android:contentDescription="Other workout exercise image" />
+                    android:contentDescription="@string/default_best"
+                    android:src="@drawable/swimming" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Custom Exercise"
+                    android:text="@string/custom"
                     android:textStyle="bold" />
             </LinearLayout>
 
