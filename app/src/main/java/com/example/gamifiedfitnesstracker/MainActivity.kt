@@ -2,6 +2,7 @@ package com.example.gamifiedfitnesstracker
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.view.View
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
@@ -19,8 +20,10 @@ import androidx.core.content.edit
 class MainActivity : AppCompatActivity() {
 
     private lateinit var etUsername: TextInputEditText
+    private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
     private lateinit var usernameLayout: TextInputLayout
+    private lateinit var emailLayout: TextInputLayout
     private lateinit var passwordLayout: TextInputLayout
     private lateinit var btnLogin: MaterialButton
     private lateinit var btnSignUp: MaterialButton
@@ -43,10 +46,14 @@ class MainActivity : AppCompatActivity() {
         etUsername = findViewById(R.id.etUsername)
         etUsername.setText(sp.getString(Utilities.PREFERENCE_USERNAME, ""))
 
+        etEmail = findViewById(R.id.etEmail)
+        etEmail.setText(sp.getString(Utilities.PREFERENCE_EMAIL, ""))
+
         etPassword = findViewById(R.id.etPassword)
         etPassword.setText(sp.getString(Utilities.PREFERENCE_PASSWORD, ""))
 
         usernameLayout = findViewById(R.id.usernameLayout)
+        emailLayout = findViewById(R.id.emailLayout)
         passwordLayout = findViewById(R.id.passwordLayout)
 
         btnLogin = findViewById(R.id.btnLogin)
@@ -55,18 +62,24 @@ class MainActivity : AppCompatActivity() {
 
         btnSignUp = findViewById(R.id.btnSignUp)
         btnSignUp.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_color))
-        btnSignUp.setOnClickListener { if (validCredentials()) signUpUser() }
+        btnSignUp.setOnClickListener { if (validCredentials(true)) signUpUser() }
 
         progressBar = findViewById(R.id.progressBar)
     }
 
-    private fun validCredentials(): Boolean {
+    private fun isEmailValid(email: String): Boolean {
+        return !email.isEmpty() && email.matches(Regex(Patterns.EMAIL_ADDRESS.pattern()))
+    }
+
+    private fun validCredentials(signingUp: Boolean = false): Boolean {
         var isValid = true
         val username = etUsername.text.toString().trim()
+        val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
 
         // Clear previous errors
         usernameLayout.error = null
+        emailLayout.error = null
         passwordLayout.error = null
 
         // Validate username
@@ -76,6 +89,14 @@ class MainActivity : AppCompatActivity() {
         } else if (!username.matches(Regex("^[a-zA-Z0-9_]+$"))) {
             usernameLayout.error = "Username may only contain letters, numbers, and underscores"
             isValid = false
+        }
+
+        // Validate email
+        if (signingUp && !isEmailValid(email)) {
+            emailLayout.error = "Valid email is required to sign up"
+            Utilities.initializeToast(this, "Please input a valid email")
+            isValid = false
+
         }
 
         // Validate password
@@ -141,8 +162,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun signUpUser() {
         val username = etUsername.text.toString().trim()    // Get username
+        val email = etEmail.text.toString().trim()          // Get email
         val password = etPassword.text.toString().trim()    // Get password
         showLoadingIndicator(true)
+
+//        // Validate email
+//        if (isEmailValid(email)) {
+//            emailLayout.error = "Valid email required for sign up"
+//            Utilities.initializeToast(
+//                this@MainActivity,
+//                "You must enter a valid email to sign up"
+//            )
+//            return
+//        }
+
 
         // Check if username already exists
         val usersRef = Utilities.USERS.child(username)
@@ -160,7 +193,7 @@ class MainActivity : AppCompatActivity() {
 
                 } else {
                     // Username available, create new user
-                    putUserInDatabase(username, password)
+                    putUserInDatabase(username, email, password)
                 }
             }
 
@@ -171,8 +204,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun putUserInDatabase(username: String, password: String) {
-        val newUser = Utilities.createNewUser(username, password)
+    fun putUserInDatabase(username: String, email: String, password: String) {
+        val newUser = Utilities.createNewUser(username, email, password)
 
         Utilities.USERS.child(username).setValue(newUser).addOnSuccessListener {
             showLoadingIndicator(false)
@@ -217,6 +250,7 @@ class MainActivity : AppCompatActivity() {
         btnLogin.isEnabled = !show
         btnSignUp.isEnabled = !show
         etUsername.isEnabled = !show
+        etEmail.isEnabled = !show
         etPassword.isEnabled = !show
     }
 }

@@ -13,6 +13,7 @@ object Utilities {
     val USERS =
         FirebaseDatabase.getInstance().reference.child("users")     // singleton database reference
     const val PREFERENCE_USERNAME = "recentUsername"
+    const val PREFERENCE_EMAIL = "recentEmail"
     const val PREFERENCE_PASSWORD = "recentPassword"
     const val FAILED_USERNAME = "invalid_user"
     const val BEST_BENCH = "benchBest"
@@ -28,11 +29,12 @@ object Utilities {
     fun initializeToast(context: Context, text: String) =
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
-    fun createNewUser(user: String, pw: String, test: Boolean = false): HashMap<String, *> {
+    fun createNewUser(user: String, email: String, pw: String, test: Boolean = false): HashMap<String, *> {
         val r = Random()
         val date = SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.US).format(Date())
         val userData = hashMapOf(
             "Username" to user,
+            "Email" to email,
             "Password" to hashPassword(pw),
             "Created On" to date,
             "Personal Bests" to hashMapOf(
