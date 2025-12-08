@@ -55,9 +55,9 @@
             android:rowCount="3"
             android:rowOrderPreserved="false">
 
-            <!-- SQUAT -->
+            <!-- BENCH PRESS -->
             <LinearLayout
-                android:id="@+id/btnSquat"
+                android:id="@+id/btnBench"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_margin="10dp"
@@ -70,18 +70,18 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:contentDescription="@string/default_best"
-                    android:src="@drawable/squats" />
+                    android:src="@drawable/bench" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/squat_enum"
+                    android:text="@string/bp_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- PUSH UP -->
+            <!-- Curl -->
             <LinearLayout
-                android:id="@+id/btnPushUp"
+                android:id="@+id/btnCurl"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_margin="10dp"
@@ -94,12 +94,12 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:contentDescription="@string/default_best"
-                    android:src="@drawable/push_up" />
+                    android:src="@drawable/curl" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pushUp_enum"
+                    android:text="@string/curl_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -127,9 +127,9 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- BENCH PRESS -->
+            <!-- Push Up -->
             <LinearLayout
-                android:id="@+id/btnBench"
+                android:id="@+id/btnPushUp"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_margin="10dp"
@@ -142,18 +142,18 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:contentDescription="@string/default_best"
-                    android:src="@drawable/bench" />
+                    android:src="@drawable/push_up" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/bp_enum"
+                    android:text="@string/pushUp_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- CURL -->
+            <!-- Squat -->
             <LinearLayout
-                android:id="@+id/btnCurl"
+                android:id="@+id/btnSquat"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_margin="10dp"
@@ -166,18 +166,18 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:contentDescription="@string/default_best"
-                    android:src="@drawable/curl" />
+                    android:src="@drawable/squats" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/curl_enum"
+                    android:text="@string/squat_enum"
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- OTHER WORKOUT (6th tile) -->
+            <!-- Swim -->
             <LinearLayout
-                android:id="@+id/btnOther"
+                android:id="@+id/btnSwim"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_margin="10dp"
@@ -195,7 +195,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/custom"
+                    android:text="@string/Swim"
                     android:textStyle="bold" />
             </LinearLayout>
 

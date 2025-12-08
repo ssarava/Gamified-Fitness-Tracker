@@ -24,10 +24,8 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
         return ViewHolder(view)
     }
 
-    private fun statToString(stat: Int?, isRun: Boolean): String =
-        if (isRun) "$stat mile${if (stat == 1) "" else "s"}"
-        else "$stat rep${if (stat == 1) "" else "s"}"
-
+    private fun statToString(stat: Int?, unit: String = "rep") =
+        "$stat $unit" + if (stat == 1) "" else "s"
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val leaderboard = LeaderboardActivity.leaderboard
@@ -41,12 +39,13 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.ViewHolder>()
 
         // Set metric value based on current sort mode
         holder.tvMetricValue.text = when (leaderboard.getCurrentSortMode()) {
-            Workout.BENCH_PRESS -> statToString(player.bpBest, false)
-            Workout.CURL -> statToString(player.curlBest, false)
-            Workout.PUSH_UP -> statToString(player.pushUpBest, false)
-            Workout.RUN -> statToString(player.runBest, true)
-            Workout.SQUAT -> statToString(player.squatBest, false)
-            else -> TODO("need to retrieve custom measurement")
+            Workout.BENCH_PRESS -> statToString(player.bpBest)
+            Workout.CURL -> statToString(player.curlBest)
+            Workout.NONE -> ""
+            Workout.PUSH_UP -> statToString(player.pushUpBest)
+            Workout.RUN -> statToString(player.runBest, "mile")
+            Workout.SQUAT -> statToString(player.squatBest)
+            Workout.SWIM -> statToString(player.swimBest, "lap")
         }
 
         // Highlight current user

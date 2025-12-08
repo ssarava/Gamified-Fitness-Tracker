@@ -22,8 +22,8 @@
 
         <!-- Back Button -->
         <include
-            layout="@layout/back_button"
-            android:id="@+id/btnBack" />
+            android:id="@+id/btnBack"
+            layout="@layout/back_button" />
 
         <!-- Trophy Icon -->
         <ImageView
@@ -79,80 +79,52 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="13dp"
             android:text="@string/sort_by"
             android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            android:textSize="20sp" />
 
-        <Button
+        <ImageView
             android:id="@+id/btnSortBenchPress"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/bp_enum"
-            android:textSize="13sp"
-            app:cornerRadius="20dp"
-            app:strokeColor="@color/primary_color"
-            app:strokeWidth="2dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/default_best"
+            android:src="@drawable/bench" />
 
-        <Button
+        <ImageView
             android:id="@+id/btnSortCurl"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/curl_enum"
-            android:textSize="13sp"
-            app:cornerRadius="20dp"
-            app:strokeColor="@color/primary_color"
-            app:strokeWidth="2dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/default_best"
+            android:src="@drawable/curl" />
 
-        <Button
+        <ImageView
             android:id="@+id/btnSortPushUp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/pushUp_enum"
-            android:textSize="11sp"
-            app:cornerRadius="20dp"
-            app:strokeColor="@color/primary_color"
-            app:strokeWidth="2dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/default_best"
+            android:src="@drawable/push_up" />
 
-        <Button
+        <ImageView
             android:id="@+id/btnSortRun"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/run_enum"
-            android:textSize="13sp"
-            app:cornerRadius="20dp"
-            app:strokeColor="@color/primary_color"
-            app:strokeWidth="2dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/default_best"
+            android:src="@drawable/running" />
 
-        <Button
+        <ImageView
             android:id="@+id/btnSortSquat"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/squat_enum"
-            android:textSize="13sp"
-            app:cornerRadius="20dp"
-            app:strokeColor="@color/primary_color"
-            app:strokeWidth="2dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/default_best"
+            android:src="@drawable/squats" />
+
+        <ImageView
+            android:id="@+id/btnSortSwim"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/default_best"
+            android:src="@drawable/swimming" />
 
 
     </LinearLayout>
@@ -195,7 +167,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="30dp"
             android:gravity="end"
-            android:text="@string/run_enum"
+            android:text="@string/none_enum"
             android:textColor="@color/text_secondary"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -226,35 +198,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Empty State -->
-    <LinearLayout
-        android:id="@+id/emptyStateLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:alpha="0.5"
-            android:contentDescription="@string/no_data"
-            android:src="@drawable/ic_empty_leaderboard" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/no_players_yet"
-            android:textColor="@color/text_secondary"
-            android:textSize="16sp" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,6 @@ class Leaderboard {
     private var leaderboardAdapter: LeaderboardAdapter
 
     constructor(usernameIn: String, sortModeIn: Workout = Workout.NONE) {
-        // Get current user from intent
         currentUsername = usernameIn
         currentSortMode = sortModeIn
         leaderboardAdapter = LeaderboardAdapter()
@@ -32,20 +31,18 @@ class Leaderboard {
 
     fun getCurrentUsername() = currentUsername
 
-    /**
-     * Sort players based on current sort mode and update the adapter
-     */
     @SuppressLint("NotifyDataSetChanged")
     fun sortAndUpdateLeaderboard() {
         when (currentSortMode) {
             Workout.BENCH_PRESS -> playersList.sortByDescending { it.bpBest }
             Workout.CURL -> playersList.sortByDescending { it.curlBest }
+            Workout.NONE -> return
             Workout.PUSH_UP -> playersList.sortByDescending { it.pushUpBest }
             Workout.RUN -> playersList.sortByDescending { it.runBest }
             Workout.SQUAT -> playersList.sortByDescending { it.squatBest }
-            else -> return
+            Workout.SWIM -> playersList.sortByDescending { it.swimBest }
         }
-        leaderboardAdapter.notifyDataSetChanged()
+        leaderboardAdapter.notifyDataSetChanged()       // update adapter
     }
 
     /**
@@ -77,6 +74,8 @@ class Leaderboard {
                                         .getValue(Int::class.java) ?: 0
                                     val squat = snapshot.child(Workout.SQUAT.displayName)
                                         .getValue(Int::class.java) ?: 0
+                                    val swim = snapshot.child(Workout.SWIM.displayName)
+                                        .getValue(Int::class.java) ?: 0
 
                                     // update playersList
                                     val player = Player(
@@ -85,7 +84,8 @@ class Leaderboard {
                                         curl,
                                         pushUp,
                                         run,
-                                        squat
+                                        squat,
+                                        swim
                                     )
                                     playersList.add(player)
                                 }

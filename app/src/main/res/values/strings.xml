@@ -5,11 +5,13 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="workout_challenge">Workout Challenge</string>
     <string name="sort_by">Sort by:</string>
-    <string name="bp_enum">Bench</string>
+    <string name="bp_enum">Bench Press</string>
     <string name="curl_enum">Curl</string>
+    <string name="none_enum">None</string>
     <string name="run_enum">Run</string>
     <string name="pushUp_enum">Push up</string>
     <string name="squat_enum">Squat</string>
+    <string name="swim_enum">Swim</string>
     <string name="rank">Rank</string>
     <string name="player">Player</string>
     <string name="back_button">Back</string>
@@ -54,19 +56,20 @@
     <string name="tvUsername_text_you">%1$s (You)</string>
 
     <!--    Select Workout Activity Strings-->
-    <string name="custom">Custom</string>
+    <string name="Swim">Swim</string>
     <string name="select_exercise">Select Exercise</string>
 
     <!--    MainMenuActivity Strings-->
-    <string name="pushUp">💪 Push-up</string>
     <string name="main_menu_title">My Fitness Journey</string>
     <string name="welcome">Welcome!</string>
     <string name="personal_bests">Your Personal Bests</string>
-    <string name="squat">🏋️ Squat</string>
-    <string name="running">🏃 Running</string>
+    <string name="play_game">PLAY GAME</string>
     <string name="bench_press">🏋️ Bench Press</string>
     <string name="curl">💪 Curl</string>
-    <string name="play_game">PLAY GAME</string>
+    <string name="pushUp">💪 Push-up</string>
+    <string name="running">🏃 Run</string>
+    <string name="squat">🏋️ Squat</string>
+    <string name="swim">🏊‍♀️️ Swim</string>
     <string name="default_best">0</string>
     <string name="fitness_journey_welcome">Welcome to your fitness journey!</string>
     <string name="my_fitness_journey">My Fitness Journey</string>

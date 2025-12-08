@@ -98,32 +98,32 @@ class MainActivity : AppCompatActivity() {
 
         usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+
+                // User exists - check hashed password input to stored password
                 if (snapshot.exists()) {
-                    // User exists, check hashed password to stored password
                     val storedPassword = snapshot.child("Password").getValue(String::class.java)
-                    val password = Utilities.hashPassword(password)
 
                     // Password correct - successful login
-                    if (storedPassword == password) {
+                    if (storedPassword == Utilities.hashPassword(password)) {
                         showLoadingIndicator(false)
                         Utilities.initializeToast(
                             this@MainActivity, "Login successful! Welcome back, $username"
                         )
 
-                        // Save login state
+                        // Save login and go to dashboard
                         saveLoginState(username, password)
-
-                        // Navigate to the next activity
                         goToNextScreen(MainMenuActivity::class.java)
                     }
 
-                    // Password incorrect - navigate to FailedLoginActivity
+                    // Password incorrect - go to failed login screen
                     else {
                         showLoadingIndicator(false)
                         goToNextScreen(FailedLoginActivity::class.java)
                     }
-                } else {
-                    // User doesn't exist
+                }
+
+                // User doesn't exist - display error
+                else {
                     showLoadingIndicator(false)
                     usernameLayout.error = "Username not found. Please sign up first."
                     Utilities.initializeToast(
@@ -155,12 +155,12 @@ class MainActivity : AppCompatActivity() {
                     usernameLayout.error = "Username already taken"
                     Utilities.initializeToast(
                         this@MainActivity,
-                        "Username already exists. Please log in or choose a different username"
+                        "Username exists. Please log in or choose a different username"
                     )
 
                 } else {
                     // Username available, create new user
-                    putUserInDatabase(username, password, true)
+                    putUserInDatabase(username, password)
                 }
             }
 
@@ -171,8 +171,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun putUserInDatabase(username: String, password: String, testUser: Boolean = false) {
-        val newUser = Utilities.createNewUser(username, password, testUser)
+    fun putUserInDatabase(username: String, password: String) {
+        val newUser = Utilities.createNewUser(username, password)
 
         Utilities.USERS.child(username).setValue(newUser).addOnSuccessListener {
             showLoadingIndicator(false)

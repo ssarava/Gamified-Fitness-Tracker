@@ -2,7 +2,6 @@ package com.example.gamifiedfitnesstracker
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -50,22 +49,10 @@ class ExerciseLoggerActivity : AppCompatActivity() {
 
         backButton.setOnClickListener { finish() }
 
-        // NEW: Populate exercise name + background dynamically
-        val exerciseNameView = findViewById<TextView>(R.id.exerciseName)
+        val workout = Workout.valueOf(workoutName)
+        game.setCurrentWorkout(workout)
+        setBackgroundExercise(workout)
 
-        if (!Workout.valueOf(workoutName).isUnimplemented()) {
-            val workout = Workout.valueOf(workoutName)
-            // It's a built-in exercise
-            game.setCurrentWorkout(workout)
-            setBackgroundExercise(workout)
-        } else {
-            // Custom workout entry
-            Log.w("main", "logging custom/default exercise $workoutName")
-            exerciseNameView.text = workoutName
-            setBackgroundExercise(Workout.DEFAULT)
-        }
-
-        // findViewById(R.id.userInput).text == "selected exercise"
         workoutUnit = workoutUnit.lowercase().replaceFirstChar { it.titlecase() }
         increaseRepsButton.text = resources.getString(R.string.increase_reps_btn_test, workoutUnit)
         increaseRepsButton.setOnClickListener { updateViews() }
@@ -87,6 +74,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         }
         leaderboardButton.setOnClickListener {
             timer.cancel()
+            leaderboardButton.isEnabled = false
             goToLeaderboard()
         }
 
@@ -135,13 +123,12 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         val builder = AdRequest.Builder()
         builder.addKeyword("exercise")
         val request = builder.build()
-
         val adUnitId = "ca-app-pub-3940256099942544/1033173712"
         val adLoadHandler = AdLoadHandler(intent)
         InterstitialAd.load(this, adUnitId, request, adLoadHandler)
 
 //        startActivity(intent)
-//        finish() // Remove from stack
+//        finish()
     }
 
     inner class AdLoadHandler() : InterstitialAdLoadCallback() {
