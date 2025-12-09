@@ -1,5 +1,6 @@
 package com.example.gamifiedfitnesstracker
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -23,10 +24,22 @@ class ExerciseLoggerActivity : AppCompatActivity() {
     private lateinit var backButton: ImageButton
     private lateinit var game: ExerciseLogger
     private lateinit var ad: InterstitialAd
+    private lateinit var emailManager: EmailNotificationManager
+    private var currentUsername: String = ""
+    private var currentUserEmail: String = ""
+    private var previousPersonalBest: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exercise_logger)
+
+        // Initialize email manager
+        emailManager = EmailNotificationManager(this)
+
+        // Get current user info
+        val sp = getSharedPreferences("${packageName}_preferences", MODE_PRIVATE)
+        currentUsername = sp.getString(Utilities.PREFERENCE_USERNAME, "") ?: ""
+        currentUserEmail = sp.getString(Utilities.PREFERENCE_EMAIL, "") ?: ""
 
         // NEW: Get values passed from SelectWorkoutActivity
         workoutName = intent.getStringExtra(Utilities.WORKOUT_NAME)!!
@@ -43,7 +56,8 @@ class ExerciseLoggerActivity : AppCompatActivity() {
 
         // Initialize Game
         val workoutBest = intent.getStringExtra(Utilities.WORKOUT_BEST)!!.toInt()
-        game = ExerciseLogger(1, workoutBest, workoutName) // Testing, Fill in with passed input
+        previousPersonalBest = workoutBest  // Store initial personal best
+        game = ExerciseLogger(1, workoutBest, workoutName)
         currentRepsTV.text = resources.getString(R.string.empty_score_value, game.getCurrentReps())
         personalBestTV.text = resources.getString(R.string.empty_score_value, workoutBest)
 
@@ -70,14 +84,20 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             increaseRepsButton.isEnabled = false
             increaseRepsButton.alpha = 0.5f
             progressBar.progress = 100
+
+            // Check leaderboard before going to leaderboard screen
+            checkLeaderboardAndOfferEmail()
             goToLeaderboard()
         }
         leaderboardButton.setOnClickListener {
             timer.cancel()
             leaderboardButton.isEnabled = false
+            game.saveToFirebase(this)
+
+            // Check leaderboard before going to leaderboard screen
+            checkLeaderboardAndOfferEmail()
             goToLeaderboard()
         }
-
     }
 
     // Change to when view appears
@@ -95,6 +115,118 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         personalBestTV.text = game.getPersonalBest().toString()
     }
 
+    /**
+     * Check if user has taken #1 spot and offer email options
+     */
+    private fun checkLeaderboardAndOfferEmail() {
+        val currentPersonalBest = game.getPersonalBest()
+
+        // Only check if personal best improved
+        if (currentPersonalBest <= previousPersonalBest) {
+            return
+        }
+
+        emailManager.checkAndNotifyLeaderboardChange(
+            workout = game.getCurrentWorkout(),
+            currentUsername = currentUsername,
+            newScore = currentPersonalBest
+        ) { result ->
+            when (result) {
+                is LeaderboardChangeResult.NewLeader -> {
+                    // Show dialog on UI thread
+                    runOnUiThread {
+                        showEmailOptionsDialog(result)
+                    }
+                }
+                is LeaderboardChangeResult.FirstEntry -> {
+                    Utilities.initializeToast(
+                        this,
+                        "You're the first person on this leaderboard!"
+                    )
+                }
+                is LeaderboardChangeResult.NoChange -> {
+                    // No change in leadership, do nothing
+                }
+                is LeaderboardChangeResult.Error -> {
+                    Utilities.initializeToast(
+                        this,
+                        "Error checking leaderboard: ${result.message}"
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * Show dialog with email options when user becomes #1
+     */
+    private fun showEmailOptionsDialog(result: LeaderboardChangeResult.NewLeader) {
+        val workoutName = result.workoutType.displayName
+        val options = arrayOf(
+            "Send congratulations to myself",
+            "Send 'bragging rights' email to ${result.formerLeader.username}",
+            "Send both emails!",
+            "Skip"
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle("🎉 You're now #1 in $workoutName! Select one the following options:")
+//            .setMessage(
+//                "You overtook ${result.formerLeader.username}!\n\n" +
+//                        "Your score: ${result.newLeader.score}\n" +
+//                        "Their score: ${result.formerLeader.score}"
+//            )
+            .setItems(options) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        // Send congratulations to self
+                        emailManager.sendCongratulationsEmail(
+                            recipientEmail = currentUserEmail,
+                            recipientName = currentUsername,
+                            workout = result.workoutType,
+                            newScore = result.newLeader.score
+                        )
+                    }
+                    1 -> {
+                        // Send bragging email to former leader
+                        emailManager.sendBraggingRightsEmail(
+                            recipientEmail = result.formerLeader.email,
+                            recipientName = result.formerLeader.username,
+                            senderName = currentUsername,
+                            workout = result.workoutType,
+                            senderScore = result.newLeader.score,
+                            recipientScore = result.formerLeader.score
+                        )
+                    }
+                    2 -> {
+                        // Send both emails
+                        emailManager.sendCongratulationsEmail(
+                            recipientEmail = currentUserEmail,
+                            recipientName = currentUsername,
+                            workout = result.workoutType,
+                            newScore = result.newLeader.score
+                        )
+                        emailManager.sendBraggingRightsEmail(
+                            recipientEmail = result.formerLeader.email,
+                            recipientName = result.formerLeader.username,
+                            senderName = currentUsername,
+                            workout = result.workoutType,
+                            senderScore = result.newLeader.score,
+                            recipientScore = result.formerLeader.score
+                        )
+                    }
+                    3 -> {
+                        // Skip - do nothing
+                        dialog.dismiss()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
     fun setBackgroundExercise(selectedExercise: Workout) {
         val background =
             when (selectedExercise) {
@@ -103,7 +235,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
                 Workout.PUSH_UP -> R.drawable.push_up
                 Workout.RUN -> R.drawable.footsteps
                 Workout.SQUAT -> R.drawable.squat_2
-                else -> R.drawable.generic_exercise // Change; Needed for testing
+                else -> R.drawable.generic_exercise
             }
 
         val imageView = findViewById<ImageView>(R.id.backgroundExerciseImage)
@@ -126,9 +258,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         val adUnitId = "ca-app-pub-3940256099942544/1033173712"
         val adLoadHandler = AdLoadHandler(intent)
         InterstitialAd.load(this, adUnitId, request, adLoadHandler)
-
-//        startActivity(intent)
-//        finish()
     }
 
     inner class AdLoadHandler() : InterstitialAdLoadCallback() {
@@ -143,7 +272,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             super.onAdLoaded(p0)
             ad = p0
             ad.show(this@ExerciseLoggerActivity)
-            ad.fullScreenContentCallback = AdManagement(intent)     // manage the ad
+            ad.fullScreenContentCallback = AdManagement(intent)
         }
     }
 
@@ -161,4 +290,3 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         }
     }
 }
-
