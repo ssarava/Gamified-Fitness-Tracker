@@ -9,6 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageButton
+import android.widget.Toast
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -86,7 +87,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             progressBar.progress = 100
 
             // Check leaderboard before going to leaderboard screen
-            checkLeaderboardAndOfferEmail()
+            checkLeaderboardAndOfferEmail {goToLeaderboard()}
             goToLeaderboard()
         }
         leaderboardButton.setOnClickListener {
@@ -95,7 +96,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             game.saveToFirebase(this)
 
             // Check leaderboard before going to leaderboard screen
-            checkLeaderboardAndOfferEmail()
+            checkLeaderboardAndOfferEmail {goToLeaderboard()}
             goToLeaderboard()
         }
     }
@@ -118,7 +119,9 @@ class ExerciseLoggerActivity : AppCompatActivity() {
     /**
      * Check if user has taken #1 spot and offer email options
      */
-    private fun checkLeaderboardAndOfferEmail() {
+    private fun checkLeaderboardAndOfferEmail(
+        onFinished: () -> Unit
+    ) {
         val currentPersonalBest = game.getPersonalBest()
 
         // Only check if personal best improved
@@ -132,35 +135,31 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             newScore = currentPersonalBest
         ) { result ->
             when (result) {
+
                 is LeaderboardChangeResult.NewLeader -> {
-                    // Show dialog on UI thread
-                    runOnUiThread {
-                        showEmailOptionsDialog(result)
-                    }
+                    showEmailOptionsDialog(result, onFinished)
                 }
-                is LeaderboardChangeResult.FirstEntry -> {
-                    Utilities.initializeToast(
-                        this,
-                        "You're the first person on this leaderboard!"
-                    )
+
+                LeaderboardChangeResult.FirstEntry,
+                LeaderboardChangeResult.NoChange -> {
+                    onFinished()
                 }
-                is LeaderboardChangeResult.NoChange -> {
-                    // No change in leadership, do nothing
-                }
+
                 is LeaderboardChangeResult.Error -> {
-                    Utilities.initializeToast(
-                        this,
-                        "Error checking leaderboard: ${result.message}"
-                    )
+                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+                    onFinished()
                 }
             }
         }
     }
 
+
+
     /**
      * Show dialog with email options when user becomes #1
      */
-    private fun showEmailOptionsDialog(result: LeaderboardChangeResult.NewLeader) {
+    private fun showEmailOptionsDialog(result: LeaderboardChangeResult.NewLeader,
+                                       onFinished: () -> Unit) {
         val workoutName = result.workoutType.displayName
         val options = arrayOf(
             "Send congratulations to myself",
@@ -218,11 +217,13 @@ class ExerciseLoggerActivity : AppCompatActivity() {
                     3 -> {
                         // Skip - do nothing
                         dialog.dismiss()
+                        onFinished()
                     }
                 }
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
+                onFinished()
             }
             .show()
     }
