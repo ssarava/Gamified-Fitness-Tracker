@@ -34,7 +34,7 @@ object Utilities {
 
     fun populateTestData(num: Int = 5) {
         for (i in 0..num) {
-            createNewUser("random_user_$i", "random_email_$i", "random_password_$i")
+            createNewUser("random_user_$i", "random_email_$i", "random_password_$i", true)
         }
     }
 
@@ -60,12 +60,7 @@ object Utilities {
         })
     }
 
-    fun createNewUser(
-        user: String,
-        email: String,
-        pw: String,
-        test: Boolean = false
-    ): HashMap<String, *> {
+    fun createNewUser(user: String, email: String, pw: String, test: Boolean = false): HashMap<String, *> {
         val r = Random()
         val testBound = 5
         val date = SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.US).format(Date())

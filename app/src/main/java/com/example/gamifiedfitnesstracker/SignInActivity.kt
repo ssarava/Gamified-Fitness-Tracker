@@ -33,7 +33,14 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initializeViews()       // Initialize UI components
-//        Utilities.populateTestData(2)
+
+//        for (i in 1..3) {
+//            val username = "random_user_$i"
+//            val email = "random_email_$i"
+//            val pw = "random_pw_$i"
+//            putUserInDatabase(username, email, pw)
+//        }
+//        Utilities.clearTestData(true)
     }
 
     /**
