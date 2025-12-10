@@ -85,10 +85,10 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             increaseRepsButton.isEnabled = false
             increaseRepsButton.alpha = 0.5f
             progressBar.progress = 100
+            game.saveToFirebase(this)
 
             // Check leaderboard before going to leaderboard screen
             checkLeaderboardAndOfferEmail {goToLeaderboard()}
-            goToLeaderboard()
         }
         leaderboardButton.setOnClickListener {
             timer.cancel()
@@ -97,7 +97,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
 
             // Check leaderboard before going to leaderboard screen
             checkLeaderboardAndOfferEmail {goToLeaderboard()}
-            goToLeaderboard()
+
         }
     }
 
@@ -217,13 +217,13 @@ class ExerciseLoggerActivity : AppCompatActivity() {
                     3 -> {
                         // Skip - do nothing
                         dialog.dismiss()
-                        onFinished()
+//                        onFinished()
                     }
                 }
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
-                onFinished()
+
             }
             .show()
     }
