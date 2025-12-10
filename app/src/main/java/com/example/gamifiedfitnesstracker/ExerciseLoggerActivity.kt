@@ -81,11 +81,13 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             increaseRepsButton.alpha = 0.5f
             progressBar.progress = 100
             game.saveToFirebase(this)
+            timer.cancel()
 
             // Check leaderboard before going to leaderboard screen
-            checkLeaderboardAndOfferEmail()
-            finish()
-            goToLeaderboard()
+            checkLeaderboardAndOfferEmail {
+                finish()
+                goToLeaderboard()}
+
         }
         leaderboardButton.setOnClickListener {
             timer.cancel()
@@ -93,12 +95,15 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             game.saveToFirebase(this)
 
             // Check leaderboard before going to leaderboard screen
-            checkLeaderboardAndOfferEmail()
-            finish()
-            goToLeaderboard()
+            checkLeaderboardAndOfferEmail{
+                finish()
+                goToLeaderboard()
+            }
 
         }
     }
+
+    // Test
 
     // Change to when view appears
     override fun onResume() {
@@ -118,7 +123,9 @@ class ExerciseLoggerActivity : AppCompatActivity() {
     /**
      * Check if user has taken #1 spot and offer email options
      */
-    private fun checkLeaderboardAndOfferEmail() {
+    private fun checkLeaderboardAndOfferEmail(
+        onFinished: () -> Unit
+    ) {
         val currentPersonalBest = game.getPersonalBest()
 
         // Only check if personal best improved
@@ -134,15 +141,18 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             when (result) {
 
                 is LeaderboardChangeResult.NewLeader -> {
-                    showEmailOptionsDialog(result)
+                    showEmailOptionsDialog(result, onFinished)
                 }
 
                 LeaderboardChangeResult.FirstEntry,
                 LeaderboardChangeResult.NoChange -> {
+                    onFinished()
                 }
 
                 is LeaderboardChangeResult.Error -> {
-                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show() }
+                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+                    onFinished()
+                }
             }
         }
     }
@@ -152,7 +162,8 @@ class ExerciseLoggerActivity : AppCompatActivity() {
     /**
      * Show dialog with email options when user becomes #1
      */
-    private fun showEmailOptionsDialog(result: LeaderboardChangeResult.NewLeader) {
+    private fun showEmailOptionsDialog(result: LeaderboardChangeResult.NewLeader,
+                                       onFinished: () -> Unit) {
         val workoutName = result.workoutType.displayName
         val options = arrayOf(
             "Send congratulations to myself",
@@ -178,6 +189,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
                             workout = result.workoutType,
                             newScore = result.newLeader.score
                         )
+                        onFinished()
                     }
                     1 -> {
                         // Send bragging email to former leader
@@ -189,6 +201,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
                             senderScore = result.newLeader.score,
                             recipientScore = result.formerLeader.score
                         )
+                        onFinished()
                     }
                     2 -> {
                         // Send both emails
@@ -206,15 +219,18 @@ class ExerciseLoggerActivity : AppCompatActivity() {
                             senderScore = result.newLeader.score,
                             recipientScore = result.formerLeader.score
                         )
+                        onFinished()
                     }
                     3 -> {
                         // Skip - do nothing
                         dialog.dismiss()
+                        onFinished()
                     }
                 }
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
+                onFinished()
 
             }
             .show()
