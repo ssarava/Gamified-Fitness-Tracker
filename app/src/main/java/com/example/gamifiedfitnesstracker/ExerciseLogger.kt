@@ -5,9 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import kotlin.math.max
 
 class ExerciseLogger {
-    private var userScore = 0
     private var repsCompleted: Int = 0
-    private var caloriesBurned: Double = 0.0
     private var personalBest = 0
     private var currentWorkout: String
     private var countDownTimer: ExerciseTimer
@@ -32,25 +30,7 @@ class ExerciseLogger {
             .setValue(personalBest)
     }
 
-    fun resetGame() {
-        userScore = 0
-        repsCompleted = 0
-        caloriesBurned = 0.0
-        personalBest = 0
-        currentWorkout = ""
-    }
-
-    fun getUserScore() = userScore
-
-    fun setUserScore(score: Int) {
-        userScore = score
-    }
-
     fun getCurrentReps() = repsCompleted
-
-    fun setCurrentReps(reps: Int) {
-        repsCompleted = reps
-    }
 
     fun getPersonalBest() = personalBest
 

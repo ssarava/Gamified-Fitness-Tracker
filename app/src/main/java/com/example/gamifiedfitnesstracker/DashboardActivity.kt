@@ -11,7 +11,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.android.gms.ads.AdView
 
-class MainMenuActivity : AppCompatActivity() {
+class DashboardActivity : AppCompatActivity() {
 
     private lateinit var btnPlayGame: MaterialButton
     private lateinit var welcomeTV: TextView

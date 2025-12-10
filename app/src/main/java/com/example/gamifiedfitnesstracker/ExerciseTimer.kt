@@ -4,7 +4,6 @@ import android.os.CountDownTimer
 
 class ExerciseTimer : CountDownTimer {
     private var lengthInMinutes: Int
-    private var timeLeft: Long = 1L
 
     constructor(minutes: Int) : super(minutes * 60 * 1000L, 1000L) {
         lengthInMinutes = minutes
@@ -20,8 +19,4 @@ class ExerciseTimer : CountDownTimer {
     override fun onFinish() {
         setOnFinishListener?.invoke()
     }
-
-    fun getLengthInMinutes() = lengthInMinutes
-
-    fun getTimeLeft() = timeLeft
 }

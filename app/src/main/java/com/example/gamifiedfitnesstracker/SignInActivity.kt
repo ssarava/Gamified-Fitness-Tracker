@@ -17,7 +17,7 @@ import androidx.core.content.edit
  * Handles user authentication with username and password.
  * User credentials are stored in Firebase.
  */
-class MainActivity : AppCompatActivity() {
+class SignInActivity : AppCompatActivity() {
 
     private lateinit var etUsername: TextInputEditText
     private lateinit var etEmail: TextInputEditText
@@ -128,12 +128,12 @@ class MainActivity : AppCompatActivity() {
                     if (storedPassword == Utilities.hashPassword(password)) {
                         showLoadingIndicator(false)
                         Utilities.initializeToast(
-                            this@MainActivity, "Login successful! Welcome back, $username"
+                            this@SignInActivity, "Login successful! Welcome back, $username"
                         )
 
                         // Save login and go to dashboard
                         saveLoginState(username, password)
-                        goToNextScreen(MainMenuActivity::class.java)
+                        goToNextScreen(DashboardActivity::class.java)
                     }
 
                     // Password incorrect - go to failed login screen
@@ -148,14 +148,14 @@ class MainActivity : AppCompatActivity() {
                     showLoadingIndicator(false)
                     usernameLayout.error = "Username not found. Please sign up first."
                     Utilities.initializeToast(
-                        this@MainActivity, "Username not found. Please sign up first."
+                        this@SignInActivity, "Username not found. Please sign up first."
                     )
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 showLoadingIndicator(false)
-                Utilities.initializeToast(this@MainActivity, "Error: ${error.message}")
+                Utilities.initializeToast(this@SignInActivity, "Error: ${error.message}")
             }
         })
     }
@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
 //        if (isEmailValid(email)) {
 //            emailLayout.error = "Valid email required for sign up"
 //            Utilities.initializeToast(
-//                this@MainActivity,
+//                this@SignInActivity,
 //                "You must enter a valid email to sign up"
 //            )
 //            return
@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
                     showLoadingIndicator(false)
                     usernameLayout.error = "Username already taken"
                     Utilities.initializeToast(
-                        this@MainActivity,
+                        this@SignInActivity,
                         "Username exists. Please log in or choose a different username"
                     )
 
@@ -199,7 +199,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onCancelled(error: DatabaseError) {
                 showLoadingIndicator(false)
-                Utilities.initializeToast(this@MainActivity, "Error: ${error.message}")
+                Utilities.initializeToast(this@SignInActivity, "Error: ${error.message}")
             }
         })
     }
@@ -210,18 +210,18 @@ class MainActivity : AppCompatActivity() {
         Utilities.USERS.child(username).setValue(newUser).addOnSuccessListener {
             showLoadingIndicator(false)
             Utilities.initializeToast(
-                this@MainActivity, "Account created successfully! Welcome, $username"
+                this@SignInActivity, "Account created successfully! Welcome, $username"
             )
 
             // Save login state
             saveLoginState(username, password)
 
             // Navigate to the next activity
-            goToNextScreen(MainMenuActivity::class.java)
+            goToNextScreen(DashboardActivity::class.java)
         }.addOnFailureListener { e ->
             showLoadingIndicator(false)
             Utilities.initializeToast(
-                this@MainActivity, "Failed to create account: ${e.message}"
+                this@SignInActivity, "Failed to create account: ${e.message}"
             )
         }
     }
@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra(Utilities.FAILED_USERNAME, etUsername.text.toString().trim())
         }
         startActivity(intent)
-        if (activityClass == MainMenuActivity::class.java) {
+        if (activityClass == DashboardActivity::class.java) {
             finish()
         }
     }

@@ -2,10 +2,10 @@ package com.example.gamifiedfitnesstracker
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import androidx.core.net.toUri
 
 class EmailNotificationManager(private val context: Context) {
 
@@ -94,35 +94,6 @@ class EmailNotificationManager(private val context: Context) {
     }
 
     /**
-     * Send notification email to former leader (person you overtook)
-     */
-    fun sendOvertakenEmail(
-        recipientEmail: String,
-        recipientName: String,
-        newLeaderName: String,
-        workout: Workout,
-        theirScore: Int,
-        newLeaderScore: Int
-    ) {
-        val subject = "⚠️ Your #1 spot in ${workout.displayName} has been taken!"
-        val body = """
-            Hi $recipientName,
-            
-            $newLeaderName has just overtaken your #1 position in ${workout.displayName}!
-            
-            Previous Leader: You ($theirScore)
-            New Leader: $newLeaderName ($newLeaderScore)
-            
-            Time to hit the gym and reclaim your throne! 💪
-            
-            Best regards,
-            Gamified Fitness Tracker Team
-        """.trimIndent()
-
-        sendEmail(recipientEmail, subject, body)
-    }
-
-    /**
      * Send bragging rights email to the person you overtook
      */
     fun sendBraggingRightsEmail(
@@ -157,7 +128,7 @@ class EmailNotificationManager(private val context: Context) {
         }
 
         val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
+            data = "mailto:".toUri()
             putExtra(Intent.EXTRA_EMAIL, arrayOf(recipientEmail))
             putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_TEXT, body)
@@ -166,7 +137,7 @@ class EmailNotificationManager(private val context: Context) {
 
         try {
             context.startActivity(Intent.createChooser(intent, "Send Email"))
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Utilities.initializeToast(context, "No email app found")
         }
     }

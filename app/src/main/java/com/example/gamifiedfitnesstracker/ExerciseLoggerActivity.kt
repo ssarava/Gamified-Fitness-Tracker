@@ -10,10 +10,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageButton
 import android.widget.Toast
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import java.util.Locale
 
 class ExerciseLoggerActivity : AppCompatActivity() {
@@ -24,7 +20,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
     private lateinit var personalBestTV: TextView
     private lateinit var backButton: ImageButton
     private lateinit var game: ExerciseLogger
-    private lateinit var ad: InterstitialAd
     private lateinit var emailManager: EmailNotificationManager
     private var currentUsername: String = ""
     private var currentUserEmail: String = ""
@@ -227,7 +222,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         val background =
             when (selectedExercise) {
                 Workout.BENCH_PRESS -> R.drawable.bench_press_2
-                Workout.CURL -> R.drawable.dumbell
+                Workout.CURL -> R.drawable.dumbbell
                 Workout.PUSH_UP -> R.drawable.push_up
                 Workout.RUN -> R.drawable.footsteps
                 Workout.SQUAT -> R.drawable.squat_2

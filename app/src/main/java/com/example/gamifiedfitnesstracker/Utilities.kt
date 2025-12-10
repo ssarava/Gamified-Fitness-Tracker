@@ -2,7 +2,10 @@ package com.example.gamifiedfitnesstracker
 
 import android.content.Context
 import android.widget.Toast
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -29,8 +32,42 @@ object Utilities {
     fun initializeToast(context: Context, text: String) =
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
-    fun createNewUser(user: String, email: String, pw: String, test: Boolean = false): HashMap<String, *> {
+    fun populateTestData(num: Int = 5) {
+        for (i in 0..num) {
+            createNewUser("random_user_$i", "random_email_$i", "random_password_$i")
+        }
+    }
+
+    fun clearTestData(all: Boolean = false, vararg usernames: String) {
+        if (all) {
+            USERS.removeValue()
+            return
+        }
+        for (username in usernames) {
+            USERS.child(username).removeValue()
+        }
+        USERS.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (i in 0..snapshot.childrenCount) {
+                    USERS.child("random_user_$i").removeValue()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Database Error ${error.code}: ${error.message}")
+            }
+
+        })
+    }
+
+    fun createNewUser(
+        user: String,
+        email: String,
+        pw: String,
+        test: Boolean = false
+    ): HashMap<String, *> {
         val r = Random()
+        val testBound = 5
         val date = SimpleDateFormat("MM/dd/yyyy hh:mm:ss", Locale.US).format(Date())
         val userData = hashMapOf(
             "Username" to user,
@@ -38,12 +75,12 @@ object Utilities {
             "Password" to hashPassword(pw),
             "Created On" to date,
             "Personal Bests" to hashMapOf(
-                Workout.BENCH_PRESS.displayName to if (test) r.nextInt(101) else 0,
-                Workout.CURL.displayName to if (test) r.nextInt(101) else 0,
-                Workout.PUSH_UP.displayName to if (test) r.nextInt(101) else 0,
-                Workout.RUN.displayName to if (test) r.nextInt(101) else 0,
-                Workout.SQUAT.displayName to if (test) r.nextInt(101) else 0,
-                Workout.SWIM.displayName to if (test) r.nextInt(101) else 0
+                Workout.BENCH_PRESS.displayName to if (test) r.nextInt(testBound) else 0,
+                Workout.CURL.displayName to if (test) r.nextInt(testBound) else 0,
+                Workout.PUSH_UP.displayName to if (test) r.nextInt(testBound) else 0,
+                Workout.RUN.displayName to if (test) r.nextInt(testBound) else 0,
+                Workout.SQUAT.displayName to if (test) r.nextInt(testBound) else 0,
+                Workout.SWIM.displayName to if (test) r.nextInt(testBound) else 0
             )
         )
         return userData
