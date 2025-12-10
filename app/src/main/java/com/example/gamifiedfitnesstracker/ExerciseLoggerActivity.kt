@@ -37,7 +37,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         currentUsername = sp.getString(Utilities.PREFERENCE_USERNAME, "") ?: ""
         currentUserEmail = sp.getString(Utilities.PREFERENCE_EMAIL, "") ?: ""
 
-        // NEW: Get values passed from SelectWorkoutActivity
+        // Get values passed from SelectWorkoutActivity
         workoutName = intent.getStringExtra(Utilities.WORKOUT_NAME)!!
         workoutUnit = intent.getStringExtra(Utilities.UNIT)!!
 
@@ -103,8 +103,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         }
     }
 
-    // Test
-
     // Change to when view appears
     override fun onResume() {
         super.onResume()
@@ -134,9 +132,9 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         }
 
         emailManager.checkAndNotifyLeaderboardChange(
-            workout = game.getCurrentWorkout(),
-            currentUsername = currentUsername,
-            newScore = currentPersonalBest
+            game.getCurrentWorkout(),
+            currentUsername,
+            currentPersonalBest
         ) { result ->
             when (result) {
 
@@ -157,8 +155,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         }
     }
 
-
-
     /**
      * Show dialog with email options when user becomes #1
      */
@@ -174,11 +170,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
 
         AlertDialog.Builder(this)
             .setTitle("🎉 You're now #1 in $workoutName! Select one the following options:")
-//            .setMessage(
-//                "You overtook ${result.formerLeader.username}!\n\n" +
-//                        "Your score: ${result.newLeader.score}\n" +
-//                        "Their score: ${result.formerLeader.score}"
-//            )
             .setItems(options) { dialog, which ->
                 when (which) {
                     0 -> {
@@ -194,30 +185,30 @@ class ExerciseLoggerActivity : AppCompatActivity() {
                     1 -> {
                         // Send bragging email to former leader
                         emailManager.sendBraggingRightsEmail(
-                            recipientEmail = result.formerLeader.email,
-                            recipientName = result.formerLeader.username,
-                            senderName = currentUsername,
-                            workout = result.workoutType,
-                            senderScore = result.newLeader.score,
-                            recipientScore = result.formerLeader.score
+                            result.formerLeader.email,
+                            result.formerLeader.username,
+                            currentUsername,
+                            result.workoutType,
+                            result.newLeader.score,
+                            result.formerLeader.score
                         )
                         onFinished()
                     }
                     2 -> {
                         // Send both emails
                         emailManager.sendCongratulationsEmail(
-                            recipientEmail = currentUserEmail,
-                            recipientName = currentUsername,
-                            workout = result.workoutType,
-                            newScore = result.newLeader.score
+                            currentUserEmail,
+                            currentUsername,
+                            result.workoutType,
+                            result.newLeader.score
                         )
                         emailManager.sendBraggingRightsEmail(
-                            recipientEmail = result.formerLeader.email,
-                            recipientName = result.formerLeader.username,
-                            senderName = currentUsername,
-                            workout = result.workoutType,
-                            senderScore = result.newLeader.score,
-                            recipientScore = result.formerLeader.score
+                            result.formerLeader.email,
+                            result.formerLeader.username,
+                            currentUsername,
+                            result.workoutType,
+                            result.newLeader.score,
+                            result.formerLeader.score
                         )
                         onFinished()
                     }
@@ -231,7 +222,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
                 onFinished()
-
             }
             .show()
     }

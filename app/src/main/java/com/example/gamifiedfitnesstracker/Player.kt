@@ -21,7 +21,8 @@ data class Player(
         swimBest: Int?
     ) : this(username, null, bpBest, curlBest, pushUpBest, runBest, squatBest, swimBest)
 
-    override fun toString(): String = "name: $username\temail: $email\tbpBest: $bpBest\tcurlBest: " +
-            "$curlBest\tpushUpBest: $pushUpBest\trunBest: " +
-            "$runBest\tsquatBest: $squatBest\tswimBest: $swimBest"
+    override fun toString(): String =
+        "name: $username\temail: $email\tbpBest: $bpBest\tcurlBest: " +
+                "$curlBest\tpushUpBest: $pushUpBest\trunBest: " +
+                "$runBest\tsquatBest: $squatBest\tswimBest: $swimBest"
 }

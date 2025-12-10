@@ -21,9 +21,7 @@ class Leaderboard {
 
     fun getAdapter() = leaderboardAdapter
 
-    fun setSortMode(mode: Workout) {
-        if (currentSortMode != mode) currentSortMode = mode
-    }
+    fun setSortMode(mode: Workout) { if (currentSortMode != mode) currentSortMode = mode }
 
     fun getCurrentSortMode() = currentSortMode
 

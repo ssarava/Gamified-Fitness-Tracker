@@ -11,6 +11,15 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.android.gms.ads.AdView
 
+/**
+ * Group members:
+ *      - Colin
+ *      - Isaac
+ *      - Nathan
+ *      - Shashank
+ *
+ * Intuitively renamed MainActivity to DashboardActivity
+ */
 class DashboardActivity : AppCompatActivity() {
 
     private lateinit var btnPlayGame: MaterialButton
@@ -31,7 +40,7 @@ class DashboardActivity : AppCompatActivity() {
         initializeViews()
         setUsernameAndWelcomeMessage()
         loadPersonalBestsFromFirebase()
-        setupClickListeners()
+        btnPlayGame.setOnClickListener { goToSelectWorkout() }
 
         val adView = findViewById<AdView>(R.id.adView)
         adView.loadAd(AdRequest.Builder().build())
@@ -101,8 +110,6 @@ class DashboardActivity : AppCompatActivity() {
             swimBestTV.text = swim.toString()
         }
     }
-
-    private fun setupClickListeners() = btnPlayGame.setOnClickListener { goToSelectWorkout() }
 
     private fun goToSelectWorkout() {
         val intent = Intent(this, SelectWorkoutActivity::class.java)

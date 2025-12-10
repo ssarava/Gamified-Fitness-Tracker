@@ -10,7 +10,6 @@ class ExerciseLogger {
     private var currentWorkout: String
     private var countDownTimer: ExerciseTimer
 
-    // User inputs the duration of exercise.
     constructor(exerciseInMinutes: Int, personalBestIn: Int, workOutNameIn: String) {
         countDownTimer = ExerciseTimer(exerciseInMinutes)
         currentWorkout = workOutNameIn
@@ -36,9 +35,7 @@ class ExerciseLogger {
 
     fun getCurrentWorkout() = Workout.valueOf(currentWorkout)
 
-    fun setCurrentWorkout(game: Workout) {
-        currentWorkout = game.name
-    }
+    fun setCurrentWorkout(workout: Workout) { currentWorkout = workout.name }
 
     fun getCountDownTimer() = countDownTimer
 }

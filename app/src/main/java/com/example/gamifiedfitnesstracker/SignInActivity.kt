@@ -33,14 +33,6 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initializeViews()       // Initialize UI components
-
-//        for (i in 1..3) {
-//            val username = "random_user_$i"
-//            val email = "random_email_$i"
-//            val pw = "random_pw_$i"
-//            putUserInDatabase(username, email, pw)
-//        }
-//        Utilities.clearTestData(true)
     }
 
     /**
@@ -172,17 +164,6 @@ class SignInActivity : AppCompatActivity() {
         val email = etEmail.text.toString().trim()          // Get email
         val password = etPassword.text.toString().trim()    // Get password
         showLoadingIndicator(true)
-
-//        // Validate email
-//        if (isEmailValid(email)) {
-//            emailLayout.error = "Valid email required for sign up"
-//            Utilities.initializeToast(
-//                this@SignInActivity,
-//                "You must enter a valid email to sign up"
-//            )
-//            return
-//        }
-
 
         // Check if username already exists
         val usersRef = Utilities.USERS.child(username)
