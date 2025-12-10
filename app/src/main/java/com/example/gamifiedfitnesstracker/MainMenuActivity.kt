@@ -72,7 +72,7 @@ class MainMenuActivity : AppCompatActivity() {
                         .getValue(Int::class.java) ?: 0
                     val squat = snapshot.child(Workout.SQUAT.displayName)
                         .getValue(Int::class.java) ?: 0
-                    val swim = snapshot.child(Workout.SQUAT.displayName)
+                    val swim = snapshot.child(Workout.SWIM.displayName)
                         .getValue(Int::class.java) ?: 0
 
                     // Update UI
