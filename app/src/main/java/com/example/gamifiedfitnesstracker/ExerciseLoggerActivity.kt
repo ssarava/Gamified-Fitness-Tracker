@@ -251,43 +251,6 @@ class ExerciseLoggerActivity : AppCompatActivity() {
         val intent = Intent(this, LeaderboardActivity::class.java)
         intent.putExtra(Utilities.WORKOUT_NAME, workoutName)
         intent.putExtra(Utilities.UNIT, workoutUnit)
-
-        // set up advertisement
-        val builder = AdRequest.Builder()
-        builder.addKeyword("exercise")
-        val request = builder.build()
-        val adUnitId = "ca-app-pub-3940256099942544/1033173712"
-        val adLoadHandler = AdLoadHandler(intent)
-        InterstitialAd.load(this, adUnitId, request, adLoadHandler)
     }
 
-    inner class AdLoadHandler() : InterstitialAdLoadCallback() {
-
-        private lateinit var intent: Intent
-
-        constructor(intentIn: Intent) : this() {
-            intent = intentIn
-        }
-
-        override fun onAdLoaded(p0: InterstitialAd) {
-            super.onAdLoaded(p0)
-            ad = p0
-            ad.show(this@ExerciseLoggerActivity)
-            ad.fullScreenContentCallback = AdManagement(intent)
-        }
-    }
-
-    inner class AdManagement() : FullScreenContentCallback() {
-        lateinit var intent: Intent
-
-        constructor(intentIn: Intent) : this() {
-            intent = intentIn
-        }
-
-        override fun onAdDismissedFullScreenContent() {
-            super.onAdDismissedFullScreenContent()
-            startActivity(intent)
-            this@ExerciseLoggerActivity.finish()
-        }
-    }
 }

@@ -4,10 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.ads.AdRequest
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.android.gms.ads.AdView
 
 class MainMenuActivity : AppCompatActivity() {
 
@@ -30,6 +32,9 @@ class MainMenuActivity : AppCompatActivity() {
         setUsernameAndWelcomeMessage()
         loadPersonalBestsFromFirebase()
         setupClickListeners()
+
+        val adView = findViewById<AdView>(R.id.adView)
+        adView.loadAd(AdRequest.Builder().build())
     }
 
     private fun initializeViews() {
