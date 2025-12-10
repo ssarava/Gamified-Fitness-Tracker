@@ -84,6 +84,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
 
             // Check leaderboard before going to leaderboard screen
             checkLeaderboardAndOfferEmail()
+            finish()
             goToLeaderboard()
         }
         leaderboardButton.setOnClickListener {
@@ -93,6 +94,7 @@ class ExerciseLoggerActivity : AppCompatActivity() {
 
             // Check leaderboard before going to leaderboard screen
             checkLeaderboardAndOfferEmail()
+            finish()
             goToLeaderboard()
 
         }
