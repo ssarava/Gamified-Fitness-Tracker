@@ -1,5 +1,1 @@
-Group Contributions:
-- Colin: Main Menu + Tweaking firebase users (25%)
-- Isaac: Select Workout Screen (25%)
-- Nathan: Game Functionality + Layout, Emailing Capability  (25%)
-- Shashank: Leaderboard Screen + Functionality (25%)
+My extension of a group project for [CMSC436](https://app.testudo.umd.edu/soc/search?courseId=cmsc436&sectionId=&termId=202508&_openSectionsOnly=on&creditCompare=&credits=&courseLevelFilter=ALL&instructor=&_facetoface=on&_blended=on&_online=on&courseStartCompare=&courseStartHour=&courseStartMin=&courseStartAM=&courseEndHour=&courseEndMin=&courseEndAM=&teachingCenter=ALL&_classDay1=on&_classDay2=on&_classDay3=on&_classDay4=on&_classDay5=on#:~:text=Programming%20Handheld%20Systems)
